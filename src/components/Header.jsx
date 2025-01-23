@@ -1,0 +1,197 @@
+import React, { Fragment, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../slices/authSlice';
+import { showToast, subCategories } from '../assets/Schemas';
+import { ExpandMore, Menu } from '@mui/icons-material';
+import LocalMallIcon from '@mui/icons-material/LocalMall';
+import SearchIcon from '@mui/icons-material/Search';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import logo from '../assets/images/logo.jpg';
+
+
+const Header = () => {
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.auth.user);
+  const [isHovered, setIsHovered] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
+
+  const [isCatone, setIsCatone] = useState(false);
+  const [isCatwo, setIsCatwo] = useState(false);
+  const [isCathree, setIsCathree] = useState(false);
+  const [isCatfour, setIsCatfour] = useState(false);
+  const [isCatfive, setIsCatfive] = useState(false);
+  const [isCatsix, setIsCatsix] = useState(false);
+
+  //burger
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  const home = () => {
+    navigate('/');
+  }
+
+  const logoutHandler = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(logout());
+      sessionStorage.clear();
+      showToast('success', 'Logout Successfully!');
+      navigate('/register');
+    } catch (error) {
+      showToast('error', 'Something went wrong!');
+    }
+  }
+
+  const postSearch = (e) => {
+    e.preventDefault();
+    navigate(`/search-results?query=${searchInput}`);
+    setSearchInput('');
+  }
+
+  const searchHandler = (e) => {
+    if (e.key === 'Enter') {
+      postSearch(e);
+    }
+  }
+
+  const totalQuantity = 4;
+
+
+  return (
+    <Fragment>
+
+      <div className='header'>
+        <div className="flex center g10">
+          <div className='header-burger' onClick={toggleMobileMenu}>
+            <Menu />
+          </div>
+          <img className='logo' onClick={home} src={logo} alt="slasa" />
+        </div>
+        <div className='searchCont'>
+          <input type="text" value={searchInput} placeholder='Search products...' onChange={(e) => setSearchInput(e.target.value)} onKeyDown={searchHandler} />
+          <SearchIcon onClick={postSearch} />
+        </div>
+        <div className="nav-mobile">
+          {!user && <Link to="/register" className="cartIcon"><h1 className='textBig'>Login / Signup</h1></Link>}
+          {user && <Link to="/cart" className="cartIcon">
+            <LocalMallIcon />
+            <div className="cartcount">{totalQuantity}</div>
+          </Link>}
+          <div className="cartIcon" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+            <AccountCircleIcon className='header-icon' />
+            <div className={`hover-div hoverdivone ${isHovered ? 'visible' : ''}`}>
+              <Link to='/' className='text'>Home page</Link>
+              {user && <Link to='/profile' className='text'>Profile</Link>}
+              {user && <Link to='/orders' className='text'>Orders</Link>}
+              <Link to='/contact-us' className='text'>Contact us</Link>
+              <Link to='/about-us' className='text'>About us</Link>
+              {user && <Link onClick={logoutHandler} className='text'>Logout</Link>}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section className="catHeader">
+        <article className="catItem" onMouseEnter={() => setIsCatone(true)} onMouseLeave={() => setIsCatone(false)}>
+          <h1 className='textBig'>Gardening</h1>
+          <ExpandMore />
+          <div className={`hover-div hoverdivtwo ${isCatone ? 'visible' : ''}`}>
+            {subCategories?.Gardening && subCategories.Gardening.map((item, index) => (
+              <Link key={index} to={`/category?query=${item}`} className='text'>
+                {item}
+              </Link>
+            ))}
+          </div>
+        </article>
+        <article className="catItem" onMouseEnter={() => setIsCatwo(true)} onMouseLeave={() => setIsCatwo(false)}>
+          <h1 className='textBig'>Wood</h1>
+          <ExpandMore />
+          <div className={`hover-div hoverdivtwo ${isCatwo ? 'visible' : ''}`}>
+            {subCategories?.Wood && subCategories.Wood.map((item, index) => (
+              <Link key={index} to={`/category?query=${item}`} className='text'>
+                {item}
+              </Link>
+            ))}
+          </div>
+        </article>
+        <article className="catItem" onMouseEnter={() => setIsCathree(true)} onMouseLeave={() => setIsCathree(false)}>
+          <h1 className='textBig'>Acrylic</h1>
+          <ExpandMore />
+          <div className={`hover-div hoverdivtwo ${isCathree ? 'visible' : ''}`}>
+            {subCategories?.Acrylic && subCategories.Acrylic.map((item, index) => (
+              <Link key={index} to={`/category?query=${item}`} className='text'>
+                {item}
+              </Link>
+            ))}
+          </div>
+        </article>
+        <article className="catItem" onMouseEnter={() => setIsCatfour(true)} onMouseLeave={() => setIsCatfour(false)}>
+          <h1 className='textBig'>Neon</h1>
+          <ExpandMore />
+          <div className={`hover-div hoverdivtwo ${isCatfour ? 'visible' : ''}`}>
+            {subCategories?.Neon && subCategories.Neon.map((item, index) => (
+              <Link key={index} to={`/category?query=${item}`} className='text'>
+                {item}
+              </Link>
+            ))}
+          </div>
+        </article>
+        <article className="catItem" onMouseEnter={() => setIsCatfive(true)} onMouseLeave={() => setIsCatfive(false)}>
+          <h1 className='textBig'>Toys</h1>
+          <ExpandMore />
+          <div className={`hover-div hoverdivtwo ${isCatfive ? 'visible' : ''}`}>
+            {subCategories?.Toys && subCategories.Toys.map((item, index) => (
+              <Link key={index} to={`/category?query=${item}`} className='text'>
+                {item}
+              </Link>
+            ))}
+          </div>
+        </article>
+        <article className="catItem" onMouseEnter={() => setIsCatsix(true)} onMouseLeave={() => setIsCatsix(false)}>
+          <h1 className='textBig'>Stationary</h1>
+          <ExpandMore />
+          <div className={`hover-div hoverdivtwo ${isCatsix ? 'visible' : ''}`}>
+            {subCategories?.Stationary && subCategories.Stationary.map((item, index) => (
+              <Link key={index} to={`/category?query=${item}`} className='text'>
+                {item}
+              </Link>
+            ))}
+          </div>
+        </article>
+      </section>
+
+      {mobileMenuOpen && <div className="overlay visible" onClick={toggleMobileMenu}></div>}
+
+      <div className={`drawer ${mobileMenuOpen ? 'open' : ''}`}>
+        <div className="drawer-content" onClick={(e) => e.stopPropagation()}>
+          <div className='searchContTwo'>
+            <input type="text" value={searchInput} placeholder='Search products...' onChange={(e) => setSearchInput(e.target.value)} onKeyDown={searchHandler} />
+            <SearchIcon onClick={postSearch} />
+          </div>
+
+          <Link to="/" className='text'>Home page</Link>
+          {!user && <Link to="/login" className='text'>Login</Link>}
+          {!user && <Link to="/signup" className='text'>Signp</Link>}
+
+          {user && <Link to='/profile' className='text'>Profile</Link>}
+          {user && <Link to="/cart" className='text'>Cart</Link>}
+          {user && <Link to='/orders' className='text'>Orders</Link>}
+
+          <Link to='/all-category-list' className='text'>All Categories</Link>
+          <Link to='/contact-us' className='text'>Contact us</Link>
+          <Link to='/about-us' className='text'>About us</Link>
+
+          {user && <Link onClick={logoutHandler}>Logout</Link>}
+        </div>
+      </div>
+
+    </Fragment>
+  )
+};
+
+export default Header;
