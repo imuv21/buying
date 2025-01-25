@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
@@ -52,9 +52,10 @@ const VerifyPassword = () => {
         }
         setIsSubmitting(true);
         try {
+            const userRole = emailData?.role;
             const userData = {
-                email: emailData.email,
-                role: emailData.role,
+                email: emailData?.email,
+                role: userRole,
                 otp: Number(formData.otp),
                 newPassword: DOMPurify.sanitize(formData.newPassword),
                 confirmNewPassword: DOMPurify.sanitize(formData.confirmNewPassword)
@@ -62,9 +63,15 @@ const VerifyPassword = () => {
             const response = await dispatch(verifyPassword(userData)).unwrap();
 
             if (response.status === "success") {
+
                 dispatch(setEmailData(null));
                 showToast('success', `${response.message}`);
-                navigate('/register');
+
+                if (userRole === "Admin") {
+                    navigate('/admin/login');
+                } else {
+                    navigate('/register');
+                }
             }
         } catch (error) {
             console.log(error);
@@ -73,6 +80,10 @@ const VerifyPassword = () => {
             setIsSubmitting(false);
         }
     }
+
+    useEffect(() => {
+        dispatch(clearErrors());
+    }, [dispatch]);
 
 
     return (
@@ -115,7 +126,7 @@ const VerifyPassword = () => {
                     </div>
 
                     <div className='flexcol center g10'>
-                        <button type="submit" className="submitBtn" style={{ borderRadius: 'var(--brTwo)' }} disabled={isSubmitting || vepaLoading}>{(isSubmitting || vepaLoading) ? 'Saving...' : 'Save'}</button>
+                        <button type="submit" style={{ borderRadius: 'var(--brTwo)' }} disabled={isSubmitting || vepaLoading}>{(isSubmitting || vepaLoading) ? 'Saving...' : 'Save'}</button>
                         <Link to="/register" className='text'>Go Back</Link>
                     </div>
                 </form>

@@ -36,7 +36,7 @@ const VerifyOTP = () => {
                 const userData = {
                     email: signupData.email,
                     role: 'User',
-                    otp: Number(newOtpDigits.join('')) 
+                    otp: Number(newOtpDigits.join(''))
                 };
                 const otpResponse = await dispatch(verifyOtp(userData)).unwrap();
 
@@ -44,7 +44,7 @@ const VerifyOTP = () => {
                     dispatch(setSignupData(null));
                     showToast('success', `${otpResponse.message}`);
                     navigate('/register');
-                
+
                 } else {
                     showToast('error', `${otpResponse.message}`);
                 }
@@ -105,6 +105,10 @@ const VerifyOTP = () => {
         }
     };
 
+    useEffect(() => {
+        dispatch(clearErrors());
+    }, [dispatch]);
+
 
     return (
         <Fragment>
@@ -129,7 +133,7 @@ const VerifyOTP = () => {
 
                     <div className='flexcol center g10'>
                         {otpError && <p className="error">{otpError}</p>}
-                        <button className="submitBtn" style={{ borderRadius: 'var(--brTwo)' }} disabled={timerRunning} onClick={handleResendClick}>
+                        <button style={{ borderRadius: 'var(--brTwo)' }} disabled={timerRunning} onClick={handleResendClick}>
                             {timerRunning ? `Resend OTP in ${timeLeft}` : "Resend OTP"}
                         </button>
                         <Link to="/register" className='text'>Go Back</Link>

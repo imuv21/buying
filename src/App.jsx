@@ -14,10 +14,10 @@ const Layout = lazy(() => import('./components/Layout'));
 const AuthPage = lazy(() => import('./pages/auth/AuthPage'));
 const VerifyOTP = lazy(() => import('./pages/auth/VerifyOTP'));
 const ForgotPassword = lazy(() => import('./pages/auth/ForgotPassword'));
-const VerifyPassword= lazy(() => import('./pages/auth/VerifyPassword'));
+const VerifyPassword = lazy(() => import('./pages/auth/VerifyPassword'));
 
 //private
-// const Profile = lazy(() => import('./pages/auth/Profile'));
+const Profile = lazy(() => import('./pages/auth/Profile'));
 // const Cart = lazy(() => import('./pages/shop/Cart'));
 // const Order = lazy(() => import('./pages/shop/Order'));
 // const OrderDetails = lazy(() => import('./pages/shop/OrderDetails'));
@@ -37,6 +37,7 @@ const Home = lazy(() => import('./pages/Home'));
 // const Term = lazy(() => import('./pages/static/Term'));
 
 //admin panel
+const AdLogin = lazy(() => import('./admin/pages/AdLogin'));
 
 function App() {
 
@@ -48,13 +49,44 @@ function App() {
         <Toaster />
         <Routes>
 
-          {/* user routes (private) */}
-          {/* <Route element={<Protector user={user} requiredRole="USER" redirect="/login" />}>
-            <Route path='/profile' element={<Layout><Profile /></Layout>} />
-            <Route path='/cart' element={<Layout><Cart /></Layout>} />
-            <Route path='/orders' element={<Layout><Order /></Layout>} />
-            <Route path='/order-details/:orderId' element={<Layout><OrderDetails /></Layout>} />
+          {/* admin routes (public) */}
+          <Route element={<Protector user={!user} redirect='/' />}>
+            <Route path='/admin/login' element={<AdLogin />} />
+          </Route>
+
+          {/* admin routes (private) */}
+          {/* <Route element={<Protector user={user} requiredRole="Admin" redirect="/admin/login" />}>
+            <Route path="/dashboard" element={<Dashboard />}>
+              <Route path="add-new-product" element={<AddNewProduct />} />
+              <Route path="edit-product/:id" element={<EditProduct />} />
+              <Route path="category-list" element={<CategoryList />} />
+              <Route path="subcategory-list/:id" element={<SubCategoryList />} />
+              <Route path="orders-list" element={<OrdersList />} />
+              <Route path="reviews-list" element={<ReviewsList />} />
+              <Route path="questions-list" element={<QuestionsList />} />
+              <Route path="user-list" element={<UsersList />} />
+              <Route path="user-list/user-orders/:id" element={<UserOrder />} />
+              <Route path="user-list/user-reviews/:id" element={<Reviews />} />
+              <Route path="user-list/user-questions/:id" element={<Questions />} />
+              <Route path="product-list" element={<ProductList />} />
+              <Route path="product-list/product-details/:id" element={<ProductDetailAdmin />} />
+              <Route path="top-rated-products" element={<TopRated />} />
+              <Route path="best-seller-products" element={<BestSeller />} />
+              <Route path="featured-products" element={<Featured />} />
+              <Route path="add-new-feature" element={<AddFeature />} />
+              <Route path="add-new-admin" element={<AddAdmin />} />
+              <Route path="role-management" element={<RoleManagement />} />
+              <Route path="admin-category" element={<AdminCategory />} />
+            </Route>
           </Route> */}
+
+          {/* user routes (private) */}
+          <Route element={<Protector user={user} requiredRole="User" redirect="/register" />}>
+            <Route path='/profile' element={<Layout><Profile /></Layout>} />
+            {/* <Route path='/cart' element={<Layout><Cart /></Layout>} />
+            <Route path='/orders' element={<Layout><Order /></Layout>} />
+            <Route path='/order-details/:orderId' element={<Layout><OrderDetails /></Layout>} /> */}
+          </Route>
 
           {/* user routes (public) */}
           <Route element={<Protector user={!user} redirect='/' />}>

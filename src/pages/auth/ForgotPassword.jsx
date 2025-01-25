@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
@@ -58,6 +58,10 @@ const ForgotPassword = () => {
         }
     }
 
+    useEffect(() => {
+        dispatch(clearErrors());
+    }, [dispatch]);
+
 
     return (
         <Fragment>
@@ -89,7 +93,7 @@ const ForgotPassword = () => {
                     </div>
 
                     <div className='flexcol center g10'>
-                        <button type="submit" className="submitBtn" style={{ borderRadius: 'var(--brTwo)' }} disabled={isSubmitting || fopaLoading}>{(isSubmitting || fopaLoading) ? 'Sending...' : 'Send OTP'}</button>
+                        <button type="submit" style={{ borderRadius: 'var(--brTwo)' }} disabled={isSubmitting || fopaLoading}>{(isSubmitting || fopaLoading) ? 'Sending...' : 'Send OTP'}</button>
                         <Link to="/register" className='text'>Go Back</Link>
                     </div>
                 </form>
