@@ -6,17 +6,17 @@ import StarOutlineIcon from '@mui/icons-material/StarOutline';
 import defaultImg from '../assets/images/defaultImage.jpg';
 
 
-const ProductCard = ({ id, title, originalPrice, salePrice, inStock, ratings, images, onPopup, onInStockChange, navigateToDetails }) => {
+const AdProductCard = ({ name, id, images, ratings, originalPrice, salePrice, stock, onPopup, onInStockChange, navigateToDetails }) => {
 
     const [currentImage, setCurrentImage] = useState((images && images.length > 0 && images[0]) ? images[0] : defaultImg);
     const handleMouseEnter = () => {
         if (images && images.length > 1) {
-            setCurrentImage(images[1] || defaultImg);
+            setCurrentImage(images[1]);
         }
     };
     const handleMouseLeave = () => {
         if (images && images.length > 0) {
-            setCurrentImage(images[0] || defaultImg);
+            setCurrentImage(images[0]);
         }
     };
 
@@ -30,9 +30,9 @@ const ProductCard = ({ id, title, originalPrice, salePrice, inStock, ratings, im
         return { fullStars: Math.min(adjustedFullStars, 5), halfStar, emptyStars };
     };
     const { fullStars, halfStar, emptyStars } = getStars(ratings);
-    const discountPercentage = ((originalPrice - salePrice) / originalPrice) * 100;
 
-    const isDiscount = salePrice < originalPrice;
+    const discountPercentage = ((originalPrice - salePrice) / originalPrice) * 100;
+    const inStock = Number(stock) > 0;
 
     useEffect(() => {
         if (onInStockChange) {
@@ -42,8 +42,8 @@ const ProductCard = ({ id, title, originalPrice, salePrice, inStock, ratings, im
 
     return (
         <div className='show-img-detail-sub' onClick={() => navigateToDetails(id)}>
-            <img className='product-img-size' src={currentImage} alt={`${title}`} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} />
-            {isDiscount && <div className="discount-icon">{discountPercentage.toFixed(0)}% OFF</div>}
+            <img className='product-img-size' src={currentImage} alt={`${name}`} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} />
+            <div className="discount-icon">{discountPercentage.toFixed(0)}% OFF</div>
             <div className='product-detail-info'>
                 <div className="starCont">
                     {[...Array(fullStars || 0)].map((_, i) => (
@@ -55,14 +55,14 @@ const ProductCard = ({ id, title, originalPrice, salePrice, inStock, ratings, im
                     {[...Array(emptyStars || 0)].map((_, i) => (
                         <span key={`empty-${i}`} className="dullStar"><StarOutlineIcon /></span>
                     ))}
-                    &nbsp;&nbsp;<span className="textSmol">{ratings}</span>
+                    &nbsp;&nbsp;<span className="text">{ratings}</span>
                 </div>
-                <p className='text'>{title.length > 25 ? `${title.substring(0, 25)}...` : title}</p>
-                {isDiscount ? (<div className='flex' style={{ gap: '10px' }}>
-                    <p className='product-discount' style={isDiscount ? { textDecoration: 'line-through' } : { textDecoration: 'none' }}>Rs. {Number(originalPrice).toFixed(2)}₹</p>
+                <p className='product-title'>{name.length > 25 ? `${name.substring(0, 25)}...` : name}</p>
+                <div className='flex' style={{ gap: '10px' }}>
+                    <p className='product-discount'>Rs. {Number(originalPrice).toFixed(2)}₹</p>
                     <p className='product-price'>Rs. {Number(salePrice).toFixed(2)}₹</p>
-                </div>) : (<p className='product-discount'>Rs. {Number(originalPrice).toFixed(2)}₹</p>)}
-                <button onClick={(event) => { event.stopPropagation(); onPopup(id); }} style={{ marginTop: '5px' }}>
+                </div>
+                <button onClick={(event) => { event.stopPropagation(); onPopup(id); }}>
                     <AddShoppingCartIcon />Add to cart
                 </button>
             </div>
@@ -70,4 +70,4 @@ const ProductCard = ({ id, title, originalPrice, salePrice, inStock, ratings, im
     )
 };
 
-export default ProductCard
+export default AdProductCard

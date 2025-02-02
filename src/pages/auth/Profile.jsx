@@ -166,14 +166,7 @@ const Profile = () => {
             const response = await dispatch(addAddress(userData)).unwrap();
             if (response.status === "success") {
                 showToast('success', `${response.message}`);
-                setAddressValues({
-                    address: '',
-                    city: '',
-                    landmark: '',
-                    pincode: '',
-                    number: '',
-                    isDefault: false
-                });
+                setAddressValues(initialState);
                 setIsClickedFooterTwo(false);
             } else {
                 showToast('error', `${response.message}`);

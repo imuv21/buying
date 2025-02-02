@@ -21,10 +21,6 @@ const Header = () => {
 
   const [isCatone, setIsCatone] = useState(false);
   const [isCatwo, setIsCatwo] = useState(false);
-  const [isCathree, setIsCathree] = useState(false);
-  const [isCatfour, setIsCatfour] = useState(false);
-  const [isCatfive, setIsCatfive] = useState(false);
-  const [isCatsix, setIsCatsix] = useState(false);
 
   //burger
   const toggleMobileMenu = () => {
@@ -64,7 +60,6 @@ const Header = () => {
 
   return (
     <Fragment>
-
       <div className='header'>
         <div className="flex center g10">
           <div className='header-burger' onClick={toggleMobileMenu}>
@@ -96,75 +91,6 @@ const Header = () => {
         </div>
       </div>
 
-      <section className="catHeader">
-        <article className="catItem" onMouseEnter={() => setIsCatone(true)} onMouseLeave={() => setIsCatone(false)}>
-          <h1 className='textBig'>Gardening</h1>
-          <ExpandMore />
-          <div className={`hover-div hoverdivtwo ${isCatone ? 'visible' : ''}`}>
-            {subCategories?.Gardening && subCategories.Gardening.map((item, index) => (
-              <Link key={index} to={`/category?query=${item}`} className='text'>
-                {item}
-              </Link>
-            ))}
-          </div>
-        </article>
-        <article className="catItem" onMouseEnter={() => setIsCatwo(true)} onMouseLeave={() => setIsCatwo(false)}>
-          <h1 className='textBig'>Wood</h1>
-          <ExpandMore />
-          <div className={`hover-div hoverdivtwo ${isCatwo ? 'visible' : ''}`}>
-            {subCategories?.Wood && subCategories.Wood.map((item, index) => (
-              <Link key={index} to={`/category?query=${item}`} className='text'>
-                {item}
-              </Link>
-            ))}
-          </div>
-        </article>
-        <article className="catItem" onMouseEnter={() => setIsCathree(true)} onMouseLeave={() => setIsCathree(false)}>
-          <h1 className='textBig'>Acrylic</h1>
-          <ExpandMore />
-          <div className={`hover-div hoverdivtwo ${isCathree ? 'visible' : ''}`}>
-            {subCategories?.Acrylic && subCategories.Acrylic.map((item, index) => (
-              <Link key={index} to={`/category?query=${item}`} className='text'>
-                {item}
-              </Link>
-            ))}
-          </div>
-        </article>
-        <article className="catItem" onMouseEnter={() => setIsCatfour(true)} onMouseLeave={() => setIsCatfour(false)}>
-          <h1 className='textBig'>Neon</h1>
-          <ExpandMore />
-          <div className={`hover-div hoverdivtwo ${isCatfour ? 'visible' : ''}`}>
-            {subCategories?.Neon && subCategories.Neon.map((item, index) => (
-              <Link key={index} to={`/category?query=${item}`} className='text'>
-                {item}
-              </Link>
-            ))}
-          </div>
-        </article>
-        <article className="catItem" onMouseEnter={() => setIsCatfive(true)} onMouseLeave={() => setIsCatfive(false)}>
-          <h1 className='textBig'>Toys</h1>
-          <ExpandMore />
-          <div className={`hover-div hoverdivtwo ${isCatfive ? 'visible' : ''}`}>
-            {subCategories?.Toys && subCategories.Toys.map((item, index) => (
-              <Link key={index} to={`/category?query=${item}`} className='text'>
-                {item}
-              </Link>
-            ))}
-          </div>
-        </article>
-        <article className="catItem" onMouseEnter={() => setIsCatsix(true)} onMouseLeave={() => setIsCatsix(false)}>
-          <h1 className='textBig'>Stationary</h1>
-          <ExpandMore />
-          <div className={`hover-div hoverdivtwo ${isCatsix ? 'visible' : ''}`}>
-            {subCategories?.Stationary && subCategories.Stationary.map((item, index) => (
-              <Link key={index} to={`/category?query=${item}`} className='text'>
-                {item}
-              </Link>
-            ))}
-          </div>
-        </article>
-      </section>
-
       {mobileMenuOpen && <div className="overlay visible" onClick={toggleMobileMenu}></div>}
 
       <div className={`drawer ${mobileMenuOpen ? 'open' : ''}`}>
@@ -189,7 +115,6 @@ const Header = () => {
           {user && <Link onClick={logoutHandler}>Logout</Link>}
         </div>
       </div>
-
     </Fragment>
   )
 };

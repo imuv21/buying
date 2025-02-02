@@ -237,6 +237,31 @@ export const deleteAddress = createAsyncThunk(
     }
 );
 
+export const addReview = createAsyncThunk(
+    'auth/addReview',
+    async (reviewData, { rejectWithValue, getState }) => {
+        try {
+            const { auth } = getState();
+            const token = auth.token;
+            const response = await axios.post(`${BASE_URL}/api/v1/user/add-review`, reviewData, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            return response.data;
+
+        } catch (error) {
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    return rejectWithValue({ message: error.response.data.message });
+                }
+                return rejectWithValue(error.response.data.errors);
+            }
+        }
+    }
+);
+
 
 const initialState = {
 
@@ -281,6 +306,10 @@ const initialState = {
 
     delLoading: false,
     delError: null,
+
+    addRevLoading: false,
+    addRevErrors: null,
+    addRevError: null,
 };
 
 const authSlice = createSlice({
@@ -305,6 +334,8 @@ const authSlice = createSlice({
             state.editError = null;
             state.getError = null;
             state.delError = null;
+            state.addRevErrors = null;
+            state.addRevError = null;
         },
         setSignupData: (state, action) => {
             state.signupData = action.payload;
@@ -360,8 +391,8 @@ const authSlice = createSlice({
                 state.logLoading = false;
                 state.logErrors = null;
                 state.logError = null;
-                state.user = action.payload.user;
-                state.token = action.payload.token;
+                state.user = action.payload?.user || null;
+                state.token = action.payload?.token || null;
             })
             .addCase(loginUser.rejected, (state, action) => {
                 state.logLoading = false;
@@ -421,8 +452,8 @@ const authSlice = createSlice({
                 state.profError = null;
                 state.user = {
                     ...state.user,
-                    firstName: action.payload.profile.firstName,
-                    lastName: action.payload.profile.lastName,
+                    firstName: action.payload?.profile?.firstName,
+                    lastName: action.payload?.profile?.lastName,
                 };
             })
             .addCase(updateProfile.rejected, (state, action) => {
@@ -443,7 +474,7 @@ const authSlice = createSlice({
                 state.addLoading = false;
                 state.addErrors = null;
                 state.addError = null;
-                state.addresses = action.payload.addresses || [];
+                state.addresses = action.payload?.addresses || [];
             })
             .addCase(addAddress.rejected, (state, action) => {
                 state.addLoading = false;
@@ -463,7 +494,7 @@ const authSlice = createSlice({
                 state.editLoading = false;
                 state.editErrors = null;
                 state.editError = null;
-                state.addresses = action.payload.addresses || [];
+                state.addresses = action.payload?.addresses || [];
             })
             .addCase(editAddress.rejected, (state, action) => {
                 state.editLoading = false;
@@ -481,7 +512,7 @@ const authSlice = createSlice({
             .addCase(getAddress.fulfilled, (state, action) => {
                 state.getLoading = false;
                 state.getError = null;
-                state.addresses = action.payload.addresses || [];
+                state.addresses = action.payload?.addresses || [];
             })
             .addCase(getAddress.rejected, (state, action) => {
                 state.getLoading = false;
@@ -495,11 +526,30 @@ const authSlice = createSlice({
             .addCase(deleteAddress.fulfilled, (state, action) => {
                 state.delLoading = false;
                 state.delError = null;
-                state.addresses = action.payload.addresses || [];
+                state.addresses = action.payload?.addresses || [];
             })
             .addCase(deleteAddress.rejected, (state, action) => {
                 state.delLoading = false;
                 state.delError = action.payload?.message || "Something went wrong!";
+            })
+
+            .addCase(addReview.pending, (state) => {
+                state.addRevLoading = true;
+                state.addRevErrors = null;
+                state.addRevError = null;
+            })
+            .addCase(addReview.fulfilled, (state, action) => {
+                state.addRevLoading = false;
+                state.addRevErrors = null;
+                state.addRevError = null;
+            })
+            .addCase(addReview.rejected, (state, action) => {
+                state.addRevLoading = false;
+                if (Array.isArray(action.payload)) {
+                    state.addRevErrors = action.payload;
+                } else {
+                    state.addRevError = action.payload?.message || "Something went wrong!";
+                }
             });
     },
 });

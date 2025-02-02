@@ -11,8 +11,8 @@ const Layout = ({ children }) => {
         <Fragment>
             <Header />
             {children}
-            <a id="whatsapp-link" target="_blank" aria-label="Send a message via WhatsApp" href="https://wa.me/+919026075867?text=Hii, I need help ">
-                <img className='fixLogo whatsapp' src={whatsapp} alt="whatsapp" />
+            <a id="whatsapp-link" target="_blank" aria-label="Chat with us on WhatsApp" href="https://wa.me/+919026075867?text=Hi, I’d like to customize some merch!">
+                <img className='fixLogo whatsapp' src={whatsapp} alt="Chat with us on WhatsApp" />
             </a>
             <ScrollToTop />
             <Footer />

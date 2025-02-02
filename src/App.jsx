@@ -24,9 +24,10 @@ const Profile = lazy(() => import('./pages/auth/Profile'));
 
 //public & private
 const Home = lazy(() => import('./pages/Home'));
-// const Search = lazy(() => import('./pages/shop/Search'));
-// const ProductDetails = lazy(() => import('./pages/shop/ProductDetails'));
-// const Category = lazy(() => import('./pages/shop/Category'));
+const Category = lazy(() => import('./pages/shop/Category'));
+const Search = lazy(() => import('./pages/shop/Search'));
+const ProductDetails = lazy(() => import('./pages/shop/ProductDetails'));
+
 
 // const ContactUs = lazy(() => import('./pages/static/ContactUs'));
 // const AboutUs = lazy(() => import('./pages/static/AboutUs'));
@@ -38,6 +39,28 @@ const Home = lazy(() => import('./pages/Home'));
 
 //admin panel
 const AdLogin = lazy(() => import('./admin/pages/AdLogin'));
+const Dashboard = lazy(() => import('./admin/pages/Dashboard'));
+const AddNewProduct = lazy(() => import('./admin/pages/AddNewProduct'));
+const EditProduct = lazy(() => import('./admin/pages/EditProduct'));
+const ProductList = lazy(() => import('./admin/pages/ProductList'));
+const TopRated = lazy(() => import('./admin/pages/TopRated'));
+const BestSeller = lazy(() => import('./admin/pages/BestSeller'));
+const Featured = lazy(() => import('./admin/pages/Featured'));
+const AddFeature = lazy(() => import('./admin/pages/AddFeature'));
+const CategoryList = lazy(() => import('./admin/pages/CategoryList'));
+const UsersList = lazy(() => import('./admin/pages/UsersList'));
+const OrdersList = lazy(() => import('./admin/pages/OrdersList'));
+const AdminOrderDetail = lazy(() => import('./admin/pages/AdminOrderDetail'));
+const ReviewsList = lazy(() => import('./admin/pages/ReviewsList'));
+const QuestionsList = lazy(() => import('./admin/pages/QuestionsList'));
+const UserOrder = lazy(() => import('./admin/pages/UserOrder'));
+const Reviews = lazy(() => import('./admin/pages/Reviews'));
+const Questions = lazy(() => import('./admin/pages/Questions'));
+const ProductDetailAdmin = lazy(() => import('./admin/pages/ProductDetailAdmin'));
+const AdminCategory = lazy(() => import('./admin/pages/AdminCategory'));
+const AddAdmin = lazy(() => import('./admin/pages/AddAdmin'));
+const RoleManagement = lazy(() => import('./admin/pages/RoleManagement'));
+
 
 function App() {
 
@@ -55,13 +78,13 @@ function App() {
           </Route>
 
           {/* admin routes (private) */}
-          {/* <Route element={<Protector user={user} requiredRole="Admin" redirect="/admin/login" />}>
+          <Route element={<Protector user={user} requiredRole="Admin" redirect="/admin/login" />}>
             <Route path="/dashboard" element={<Dashboard />}>
               <Route path="add-new-product" element={<AddNewProduct />} />
               <Route path="edit-product/:id" element={<EditProduct />} />
               <Route path="category-list" element={<CategoryList />} />
-              <Route path="subcategory-list/:id" element={<SubCategoryList />} />
               <Route path="orders-list" element={<OrdersList />} />
+              <Route path='order-details/:orderId' element={<AdminOrderDetail />} />
               <Route path="reviews-list" element={<ReviewsList />} />
               <Route path="questions-list" element={<QuestionsList />} />
               <Route path="user-list" element={<UsersList />} />
@@ -78,7 +101,7 @@ function App() {
               <Route path="role-management" element={<RoleManagement />} />
               <Route path="admin-category" element={<AdminCategory />} />
             </Route>
-          </Route> */}
+          </Route>
 
           {/* user routes (private) */}
           <Route element={<Protector user={user} requiredRole="User" redirect="/register" />}>
@@ -99,11 +122,11 @@ function App() {
           {/* user routes (public & private) */}
           <Route path='/' element={<Layout><Home /></Layout>} />
           <Route path='/loader' element={<Layout><Loader /></Layout>} />
-          {/* <Route path='/product-details/:id' element={<Layout><ProductDetails /></Layout>} />
-          <Route path='/search-results' element={<Layout><Search /></Layout>} />
           <Route path='/category' element={<Layout><Category /></Layout>} />
+          <Route path='/search-results' element={<Layout><Search /></Layout>} />
+          <Route path='/product-details/:productId' element={<Layout><ProductDetails /></Layout>} />
 
-          <Route path='/contact-us' element={<Layout><ContactUs /></Layout>} />
+          {/* <Route path='/contact-us' element={<Layout><ContactUs /></Layout>} />
           <Route path='/about-us' element={<Layout><AboutUs /></Layout>} />
           <Route path='/bulk-order' element={<Layout><BulkOrder /></Layout>} />
           <Route path='/privacy-policy' element={<Layout><Privacy /></Layout>} />

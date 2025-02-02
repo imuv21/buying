@@ -56,7 +56,7 @@ const AdLogin = () => {
 
             if (response.status === "success") {
                 showToast('success', `${response.message}`);
-                navigate('/admin/dashboard/home');
+                navigate('/dashboard/add-new-product');
             }
 
         } catch (error) {
