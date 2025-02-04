@@ -1,12 +1,24 @@
-import React, { Fragment, lazy, Suspense } from 'react';
+import React, { Fragment, lazy, Suspense, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useDispatch } from 'react-redux';
+import { getCart } from '../slices/productSlice';
 import Loader from '../components/Loader';
 import Carousel from '../components/Carousel';
 import Grid from '../components/Grid';
+
+
 const TextSlider = lazy(() => import('../components/TextSlider'));
 const ImageSlider = lazy(() => import('../components/ImageSlider'));
 
+
 const Home = () => {
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(getCart());
+    }, [dispatch]);
+
 
     return (
         <Fragment>

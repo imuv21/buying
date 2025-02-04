@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import StarIcon from '@mui/icons-material/Star';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
@@ -6,7 +6,7 @@ import StarOutlineIcon from '@mui/icons-material/StarOutline';
 import defaultImg from '../assets/images/defaultImage.jpg';
 
 
-const ProductCard = ({ id, title, originalPrice, salePrice, inStock, ratings, images, onPopup, onInStockChange, navigateToDetails }) => {
+const ProductCard = ({ id, title, originalPrice, salePrice, stocks, ratings, images, onPopup, navigateToDetails }) => {
 
     const [currentImage, setCurrentImage] = useState((images && images.length > 0 && images[0]) ? images[0] : defaultImg);
     const handleMouseEnter = () => {
@@ -33,12 +33,7 @@ const ProductCard = ({ id, title, originalPrice, salePrice, inStock, ratings, im
     const discountPercentage = ((originalPrice - salePrice) / originalPrice) * 100;
 
     const isDiscount = salePrice < originalPrice;
-
-    useEffect(() => {
-        if (onInStockChange) {
-            onInStockChange(inStock);
-        }
-    }, [inStock, onInStockChange]);
+    
 
     return (
         <div className='show-img-detail-sub' onClick={() => navigateToDetails(id)}>
@@ -62,7 +57,7 @@ const ProductCard = ({ id, title, originalPrice, salePrice, inStock, ratings, im
                     <p className='product-discount' style={isDiscount ? { textDecoration: 'line-through' } : { textDecoration: 'none' }}>Rs. {Number(originalPrice).toFixed(2)}₹</p>
                     <p className='product-price'>Rs. {Number(salePrice).toFixed(2)}₹</p>
                 </div>) : (<p className='product-discount'>Rs. {Number(originalPrice).toFixed(2)}₹</p>)}
-                <button onClick={(event) => { event.stopPropagation(); onPopup(id); }} style={{ marginTop: '5px' }}>
+                <button onClick={(event) => { event.stopPropagation(); onPopup(id, stocks); }} style={{ marginTop: '5px' }}>
                     <AddShoppingCartIcon />Add to cart
                 </button>
             </div>

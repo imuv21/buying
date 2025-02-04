@@ -92,6 +92,104 @@ export const getReviews = createAsyncThunk(
 );
 
 
+export const addCart = createAsyncThunk(
+    'product/addCart',
+    async (cartData, { rejectWithValue, getState }) => {
+        try {
+            const { auth } = getState();
+            const token = auth.token;
+            const response = await axios.post(`${BASE_URL}/api/v1/user/add-to-cart`, cartData, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            return response.data;
+
+        } catch (error) {
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    return rejectWithValue({ message: error.response.data.message });
+                }
+            }
+        }
+    }
+);
+
+export const getCart = createAsyncThunk(
+    'product/getCart',
+    async (_, { rejectWithValue, getState }) => {
+        try {
+            const { auth } = getState();
+            const token = auth.token;
+            const response = await axios.get(`${BASE_URL}/api/v1/user/get-cart`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            return response.data;
+
+        } catch (error) {
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    return rejectWithValue({ message: error.response.data.message });
+                }
+            }
+        }
+    }
+);
+
+export const adjustCart = createAsyncThunk(
+    'product/adjustCart',
+    async ({cartItemId, action}, { rejectWithValue, getState }) => {
+        try {
+            const { auth } = getState();
+            const token = auth.token;
+            const response = await axios.put(`${BASE_URL}/api/v1/user/cart-quantity/${cartItemId}`, action, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            return response.data;
+
+        } catch (error) {
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    return rejectWithValue({ message: error.response.data.message });
+                }
+            }
+        }
+    }
+);
+
+export const removeCart = createAsyncThunk(
+    'product/removeCart',
+    async (cartData, { rejectWithValue, getState }) => {
+        try {
+            const { auth } = getState();
+            const token = auth.token;
+            const response = await axios.delete(`${BASE_URL}/api/v1/user/remove-from-cart`, {
+                data: cartData,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            return response.data;
+
+        } catch (error) {
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    return rejectWithValue({ message: error.response.data.message });
+                }
+            }
+        }
+    }
+);
+
+
 const initialState = {
 
     getCatLoading: false,
@@ -133,6 +231,21 @@ const initialState = {
     isLastProRev: false,
     hasNextProRev: false,
     hasPreviousProRev: false,
+
+
+    cart: [],
+    totalQuantity: 0,
+    addCartLoading: false,
+    addCartError: null,
+
+    getCartLoading: false,
+    getCartError: null,
+
+    adjustCartLoading: false,
+    adjustCartError: null,
+
+    removeCartLoading: false,
+    removeCartError: null,
 };
 
 const productSlice = createSlice({
@@ -222,6 +335,65 @@ const productSlice = createSlice({
             .addCase(getReviews.rejected, (state, action) => {
                 state.proRevLoading = false;
                 state.proRevError = action.payload?.message || "Something went wrong!";
+            })
+
+            .addCase(addCart.pending, (state) => {
+                state.addCartLoading = true;
+                state.addCartError = null;
+            })
+            .addCase(addCart.fulfilled, (state, action) => {
+                state.addCartLoading = false;
+                state.addCartError = null;
+                state.totalQuantity = action.payload?.totalQuantity || 0;
+            })
+            .addCase(addCart.rejected, (state, action) => {
+                state.addCartLoading = false;
+                state.addCartError = action.payload?.message || "Something went wrong!";
+            })
+
+            .addCase(getCart.pending, (state) => {
+                state.getCartLoading = true;
+                state.getCartError = null;
+            })
+            .addCase(getCart.fulfilled, (state, action) => {
+                state.getCartLoading = false;
+                state.getCartError = null;
+                state.cart = action.payload?.cart || [];
+                state.totalQuantity = action.payload?.totalQuantity || 0;
+            })
+            .addCase(getCart.rejected, (state, action) => {
+                state.getCartLoading = false;
+                state.getCartError = action.payload?.message || "Something went wrong!";
+            })
+
+            .addCase(adjustCart.pending, (state) => {
+                state.adjustCartLoading = true;
+                state.removeCartError = null;
+            })
+            .addCase(adjustCart.fulfilled, (state, action) => {
+                state.adjustCartLoading = false;
+                state.removeCartError = null;
+                state.cart = action.payload?.cart || [];
+                state.totalQuantity = action.payload?.totalQuantity || 0;
+            })
+            .addCase(adjustCart.rejected, (state, action) => {
+                state.adjustCartLoading = false;
+                state.removeCartError = action.payload?.message || "Something went wrong!";
+            })
+
+            .addCase(removeCart.pending, (state) => {
+                state.removeCartLoading = true;
+                state.removeCartError = null;
+            })
+            .addCase(removeCart.fulfilled, (state, action) => {
+                state.removeCartLoading = false;
+                state.removeCartError = null;
+                state.cart = action.payload?.cart || [];
+                state.totalQuantity = action.payload?.totalQuantity || 0;
+            })
+            .addCase(removeCart.rejected, (state, action) => {
+                state.removeCartLoading = false;
+                state.removeCartError = action.payload?.message || "Something went wrong!";
             });
     },
 });

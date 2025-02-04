@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTransition, animated } from '@react-spring/web';
-import { getProductDetails, getReviews } from '../../slices/productSlice';
+import { getProductDetails, getReviews, addCart } from '../../slices/productSlice';
 import { addReview, clearErrors } from '../../slices/authSlice';
 import { showToast } from '../../assets/Schemas';
 import DOMPurify from 'dompurify';
@@ -41,6 +41,7 @@ const ProductDetails = () => {
     };
     const [formValues, setFormValues] = useState(initialState);
 
+
     useEffect(() => {
         dispatch(getProductDetails(productId));
     }, [dispatch, productId]);
@@ -51,8 +52,11 @@ const ProductDetails = () => {
 
 
     const [quantity, setQuantity] = useState(1);
-    const [showReview, setShowReview] = useState(false);
+    const [color, setColor] = useState("");
+    const [productSize, setProductSize] = useState("");
     const [isAdded, setIsAdded] = useState(false);
+
+    const [showReview, setShowReview] = useState(false);
     const [revSubmitted, setRevSubmitted] = useState(false);
 
     const discountPercentage = ((productDetails?.originalPrice - productDetails?.salePrice) / productDetails?.originalPrice) * 100;
@@ -71,6 +75,7 @@ const ProductDetails = () => {
 
     const images = productDetails?.images || [];
     const inStock = productDetails?.inStock || false;
+    const availableStock = productDetails?.stocks || 0;
 
     //image slider
     const [index, setIndex] = useState(0);
@@ -105,6 +110,11 @@ const ProductDetails = () => {
 
     //quantity
     const increase = () => {
+        if (quantity >= availableStock) {
+            return showToast('error', `Out of stock!`);
+        } else if (quantity >= 10) {
+            return showToast('error', `You can't add more than 10 products!`);
+        } 
         setQuantity((prev) => prev + 1);
     };
     const decrease = () => {
@@ -112,25 +122,27 @@ const ProductDetails = () => {
             setQuantity((prev) => prev - 1);
         }
     };
-    const handleQuantity = (e) => {
-        const value = parseInt(e.target.value, 10) || 1;
-        setQuantity(value > 0 ? value : 1);
-    };
-
 
     //login, add to cart
-    const addToCartHandler = async (proid, quantity) => {
+    const addToCartHandler = async (productId, quantity, color, productSize) => {
         if (isAdded) return;
+        if (!color || !productSize) {
+            return showToast('error', 'Please pick color and size first!');
+        }
         setIsAdded(true);
         try {
-            // await dispatch(addToCart({ productId: proid, quantity })).unwrap();
-            // toast(<div className='flex center g5'> < VerifiedIcon /> {`${quantity} item${quantity > 1 ? 's' : ''} added to cart!`}</div>, { duration: 3000, position: 'top-center', style: { color: 'rgb(0, 189, 0)' }, className: 'success', ariaProps: { role: 'status', 'aria-live': 'polite' } });
+            const cartData = { productId, quantity, color, size: productSize };
+            const response = await dispatch(addCart(cartData)).unwrap();
 
+            if (response.status === "success") {
+                showToast('success', `${response.message}`);
+            } else {
+                showToast('error', `${response.message}`);
+            }
         } catch (error) {
-            console.error('Failed to add item to cart:', error);
+            showToast('error', 'Something went wrong!');
         } finally {
             setIsAdded(false);
-            setIsClickedFooter(false);
         }
     };
     const login = () => {
@@ -382,12 +394,12 @@ const ProductDetails = () => {
                             </div>
                         </div>
                         <div className="pdcartdetail">
-                            <select name="color" id="color">
+                            <select name="color" id="color" value={color} onChange={(e) => setColor(e.target.value)}>
                                 <option value="">Select Color</option>
                                 <option value="black">Black</option>
                                 <option value="gray">Gray</option>
                             </select>
-                            <select name="size" id="size">
+                            <select name="productSize" id="productSize" value={productSize} onChange={(e) => setProductSize(e.target.value)}>
                                 <option value="">Select Size</option>
                                 <option value="small">Small</option>
                                 <option value="medium">Medium</option>
@@ -397,12 +409,12 @@ const ProductDetails = () => {
                                 <option value="3xlarge">3X Large</option>
                             </select>
                             <div className="flex g10 w100">
-                                <div className="plusMinusCont">
-                                    <div onClick={increase}><AddIcon /></div>
-                                    <input type="number" value={quantity} onChange={handleQuantity} min={1} />
-                                    <div onClick={decrease}><RemoveIcon /></div>
+                                <div className="quantity-controls">
+                                    <button onClick={decrease}><RemoveIcon /></button>
+                                    <div className="quantity">{quantity}</div>
+                                    <button onClick={increase}><AddIcon /></button>
                                 </div>
-                                <button onClick={() => (user ? addToCartHandler(id, quantity) : login())} disabled={isAdded || !inStock}>{isAdded ? 'Adding...' : 'Add to cart'}</button>
+                                <button onClick={() => (user ? addToCartHandler(productId, quantity, color, productSize) : login())} disabled={isAdded || !inStock}>{isAdded ? 'Adding...' : 'Add to cart'}</button>
                             </div>
                             <button onClick={() => gotowhatsapp(productDetails?.title)}>Customize This Product</button>
                         </div>

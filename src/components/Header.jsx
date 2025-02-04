@@ -15,6 +15,7 @@ const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
+  const { totalQuantity } = useSelector((state) => state.product);
   const [isHovered, setIsHovered] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchInput, setSearchInput] = useState('');
@@ -55,7 +56,6 @@ const Header = () => {
     }
   }
 
-  const totalQuantity = 4;
 
 
   return (
@@ -75,7 +75,7 @@ const Header = () => {
           {!user && <Link to="/register" className="cartIcon"><h1 className='textBig'>Login / Signup</h1></Link>}
           {user && <Link to="/cart" className="cartIcon">
             <LocalMallIcon />
-            <div className="cartcount">{totalQuantity}</div>
+            <div className="cartcount">{totalQuantity || 0}</div>
           </Link>}
           <div className="cartIcon" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
             <AccountCircleIcon className='header-icon' />

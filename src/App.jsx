@@ -18,7 +18,7 @@ const VerifyPassword = lazy(() => import('./pages/auth/VerifyPassword'));
 
 //private
 const Profile = lazy(() => import('./pages/auth/Profile'));
-// const Cart = lazy(() => import('./pages/shop/Cart'));
+const Cart = lazy(() => import('./pages/shop/Cart'));
 // const Order = lazy(() => import('./pages/shop/Order'));
 // const OrderDetails = lazy(() => import('./pages/shop/OrderDetails'));
 
@@ -106,8 +106,8 @@ function App() {
           {/* user routes (private) */}
           <Route element={<Protector user={user} requiredRole="User" redirect="/register" />}>
             <Route path='/profile' element={<Layout><Profile /></Layout>} />
-            {/* <Route path='/cart' element={<Layout><Cart /></Layout>} />
-            <Route path='/orders' element={<Layout><Order /></Layout>} />
+            <Route path='/cart' element={<Layout><Cart /></Layout>} />
+            {/* <Route path='/orders' element={<Layout><Order /></Layout>} />
             <Route path='/order-details/:orderId' element={<Layout><OrderDetails /></Layout>} /> */}
           </Route>
 

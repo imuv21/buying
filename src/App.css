@@ -170,6 +170,7 @@ button .MuiSvgIcon-root {
 
 button:hover {
     background-color: var(--codeFive);
+    border: 1px solid var(--codeFive);
 }
 
 button:disabled {
@@ -196,6 +197,24 @@ button:focus {
     color: #0091EB;
     border: 2px solid #0091EB;
     background-color: var(--codeOne);
+}
+
+.remove-btn {
+    max-width: fit-content;
+    padding: 5px 15px;
+    background-color: var(--codeTwo);
+    color: var(--codeFour);
+    border: none;
+}
+
+.remove-btn:hover {
+    background-color: var(--redCode);
+    color: var(--codeOne);
+    border: none;
+}
+
+.quantity-btn {
+    padding: 5px;
 }
 
 
@@ -1126,53 +1145,63 @@ button:focus {
     flex-direction: row;
     gap: 0px;
 }
+
 .star .MuiSvgIcon-root {
     width: 15px;
     height: 15px;
     color: gold;
 }
+
 .dullStar .MuiSvgIcon-root {
     width: 15px;
     height: 15px;
     color: var(--codeThree);
 }
+
 .starTwo .MuiSvgIcon-root {
     width: 26px;
     height: 26px;
     color: gold;
 }
+
 .dullStarTwo .MuiSvgIcon-root {
     width: 26px;
     height: 26px;
     color: var(--codeThree);
 }
+
 .starThree .MuiSvgIcon-root {
     width: 20px;
     height: 20px;
     color: gold;
 }
+
 .dullStarThree .MuiSvgIcon-root {
     width: 20px;
     height: 20px;
     color: var(--codeThree);
 }
+
 .starFour .MuiSvgIcon-root {
     width: 30px;
     height: 30px;
     color: gold;
     cursor: pointer;
 }
+
 .dullStarFour .MuiSvgIcon-root {
     width: 30px;
     height: 30px;
     color: var(--codeThree);
     cursor: pointer;
 }
+
 .starFive .MuiSvgIcon-root {
     width: 18px;
     height: 18px;
     color: gold;
 }
+
 .dullStarFive .MuiSvgIcon-root {
     width: 18px;
     height: 18px;
@@ -1811,32 +1840,6 @@ button:focus {
     transform: scale(1.1);
 }
 
-.plusMinusCont {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--codeSix);
-    border-radius: var(--brOne);
-    gap: 0px;
-}
-
-.plusMinusCont div {
-    padding: 6px 12px;
-    cursor: pointer;
-}
-
-.plusMinusCont .MuiSvgIcon-root {
-    width: 20px;
-    height: 20px;
-    color: var(--codeOne);
-}
-
-.plusMinusCont input {
-    border: 1px solid var(--codeSix);
-    width: 60px;
-    text-align: center;
-    background-color: var(--codeOne);
-}
 
 /* product detail ratings */
 
@@ -2019,12 +2022,14 @@ button:focus {
     border-bottom: 1px solid var(--codeTwo);
     border-top: 1px solid var(--codeTwo);
 }
+
 .sortCat {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
+
 .sortToggle button,
 .sortToggle select,
 .sortCat select {
@@ -2048,6 +2053,7 @@ button:focus {
     align-items: center;
     justify-content: space-between;
 }
+
 .revsubcont {
     display: flex;
     align-items: center;
@@ -2061,6 +2067,107 @@ button:focus {
     color: var(--codeThree);
 }
 
+
+/* cart page  */
+.cart-content {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 30px;
+}
+.cart-summary {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--codeOne);
+    padding: 20px;
+    gap: 10px;
+    border-radius: var(--brTwo);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+}
+.cart-summary h1 {
+    margin-bottom: 20px;
+}
+.selectaddress {
+    gap: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+.summary-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cart-items {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--codeOne);
+    padding: 10px;
+    gap: 0px;
+    border-radius: var(--brTwo);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.cart-item {
+    width: 100%;
+    padding: 10px;
+    gap: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    border-bottom: var(--border);
+}
+
+.item-image {
+    width: 120px;
+    height: 120px;
+    flex-shrink: 0;
+}
+.item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.item-details {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 15px;
+}
+.item-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 3px;
+}
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+}
+.quantity {
+    width: fit-content;
+    padding: 0px 16px;
+    font-family: var(--textFamily);
+    text-align: center;
+}
 
 
 

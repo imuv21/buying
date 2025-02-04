@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { showToast } from '../../assets/Schemas';
-import { getProductsByCategory } from '../../slices/productSlice';
+import { addCart, getProductsByCategory } from '../../slices/productSlice';
 
 import ProductCard from '../../components/ProductCard';
 import Loader from '../../components/Loader';
@@ -21,10 +21,12 @@ const Category = () => {
     const user = useSelector((state) => state.auth.user);
 
     const [isClickedFooter, setIsClickedFooter] = useState(false);
-    const [isAdded, setIsAdded] = useState(false);
-    const [inStockData, setInStockData] = useState(false);
     const [proid, setProid] = useState(null);
+    const [stocksData, setStocksData] = useState(0);
     const [quantity, setQuantity] = useState(1);
+    const [color, setColor] = useState("");
+    const [productSize, setProductSize] = useState("");
+    const [isAdded, setIsAdded] = useState(false);
 
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(5);
@@ -39,13 +41,18 @@ const Category = () => {
     }, [dispatch, page, size, categoryName, sortBy, order]);
 
 
-    const handleClickFooter = (id) => {
+    const handleClickFooter = (id, stocks) => {
         setProid(id);
+        setStocksData(stocks);
         setIsClickedFooter(true);
     };
-    const closepopup = (event) => {
-        event.preventDefault();
+    const closepopup = () => {
         setIsClickedFooter(false);
+        setProid(null);
+        setQuantity(1);
+        setColor("");
+        setProductSize("");
+        setStocksData(0);
     };
 
     //pagination
@@ -83,6 +90,11 @@ const Category = () => {
 
     //quantity
     const increase = () => {
+        if (quantity >= stocksData) {
+            return showToast('error', `Out of stock!`);
+        } else if (quantity >= 10) {
+            return showToast('error', `You can't add more than 10 products!`);
+        }
         setQuantity((prev) => prev + 1);
     };
     const decrease = () => {
@@ -90,29 +102,29 @@ const Category = () => {
             setQuantity((prev) => prev - 1);
         }
     };
-    const handleQuantity = (e) => {
-        const value = parseInt(e.target.value, 10) || 1;
-        setQuantity(value > 0 ? value : 1);
-    };
-
-    const handleInStockChange = (inStock) => {
-        setInStockData(inStock);
-    };
 
 
     //login, add to cart
-    const addToCartHandler = async (proid, quantity) => {
+    const addToCartHandler = async (proid, quantity, color, productSize) => {
         if (isAdded) return;
+        if (!color || !productSize) {
+            return showToast('error', 'Please pick color and size first!');
+        }
         setIsAdded(true);
         try {
-            // await dispatch(addToCart({ productId: proid, quantity })).unwrap();
-            // toast(<div className='flex center g5'> < VerifiedIcon /> {`${quantity} item${quantity > 1 ? 's' : ''} added to cart!`}</div>, { duration: 3000, position: 'top-center', style: { color: 'rgb(0, 189, 0)' }, className: 'success', ariaProps: { role: 'status', 'aria-live': 'polite' } });
+            const cartData = { productId: proid, quantity, color, size: productSize };
+            const response = await dispatch(addCart(cartData)).unwrap();
 
+            if (response.status === "success") {
+                showToast('success', `${response.message}`);
+                closepopup();
+            } else {
+                showToast('error', `${response.message}`);
+            }
         } catch (error) {
-            console.error('Failed to add item to cart:', error);
+            showToast('error', 'Something went wrong!');
         } finally {
             setIsAdded(false);
-            setIsClickedFooter(false);
         }
     };
     const login = () => {
@@ -173,11 +185,10 @@ const Category = () => {
                                     title={pro.title}
                                     originalPrice={pro.originalPrice}
                                     salePrice={pro.salePrice}
-                                    inStock={pro.inStock}
+                                    stocks={pro.stocks}
                                     ratings={pro.averageRating}
                                     images={pro.images}
                                     onPopup={handleClickFooter}
-                                    onInStockChange={handleInStockChange}
                                     navigateToDetails={(id) => navigate(`/product-details/${id}`)}
                                 />
                             </Fragment>
@@ -218,19 +229,32 @@ const Category = () => {
                             <form className="popup-wrapper" style={{ gap: '10px' }}>
                                 <h1 className="headingSmol">Add To Cart</h1>
 
-                                <div className="flex center g20" style={{ marginTop: '15px' }}>
-                                    <div className="plusMinusCont">
-                                        <div onClick={increase}><AddIcon /></div>
-                                        <input type="number" value={quantity} onChange={handleQuantity} min={1} />
-                                        <div onClick={decrease}><RemoveIcon /></div>
-                                    </div>
-                                    <div className="stock" style={{ backgroundColor: inStockData ? 'var(--codeFive)' : '#ff7979' }}>
-                                        {inStockData ? `In Stock` : 'Out of Stock'}
+                                <div className="flexcol center g5 w100" style={{ marginTop: '15px' }}>
+                                    <select name="color" id="color" value={color} onChange={(e) => setColor(e.target.value)}>
+                                        <option value="">Select Color</option>
+                                        <option value="black">Black</option>
+                                        <option value="gray">Gray</option>
+                                    </select>
+                                    <select name="productSize" id="productSize" value={productSize} onChange={(e) => setProductSize(e.target.value)}>
+                                        <option value="">Select Size</option>
+                                        <option value="small">Small</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="large">Large</option>
+                                        <option value="xlarge">X Large</option>
+                                        <option value="2xlarge">2X Large</option>
+                                        <option value="3xlarge">3X Large</option>
+                                    </select>
+                                    <div className="quantity-controls">
+                                        <button type="button" onClick={decrease}><RemoveIcon /></button>
+                                        <div className="quantity">{quantity}</div>
+                                        <button type="button" onClick={increase}><AddIcon /></button>
                                     </div>
                                 </div>
 
-                                <div className="flex center g20" style={{ marginTop: '15px' }}>
-                                    <button className='buyNow' onClick={() => (user ? addToCartHandler(proid, quantity) : login())} disabled={isAdded || !inStockData}>{isAdded ? 'Adding...' : 'Add to cart'}</button>
+                                <div className="flex center w100 g20" style={{ marginTop: '15px' }}>
+                                    <button type='button' onClick={() => (user ? addToCartHandler(proid, quantity, color, productSize) : login())} disabled={isAdded}>
+                                        {isAdded ? 'Adding...' : 'Add to cart'}
+                                    </button>
                                     <button type="button" className="applyBtn" onClick={closepopup}>No</button>
                                 </div>
                             </form>
