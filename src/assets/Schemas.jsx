@@ -278,14 +278,13 @@ export const showToast = (type, message) => {
 //admin panel
 import orderList from './images/icons8-orders-list-100.png';
 import reviewsList from './images/reviews.png';
-import questionsList from './images/question.png';
 import userList from './images/icons8-users-list-100.png';
 import productList from './images/icons8-product-list-100.png';
 import addproduct from './images/icons8-add-new-product-100.png';
 import categoryList from './images/icons8-category-list-100.png';
 import topRated from './images/icons8-top-rated-100.png';
 import bestSeller from './images/icons8-best-seller-100.png';
-import rolemanagement from './images/icons8-role-management-100.png';
+import adminList from './images/icons8-role-management-100.png';
 import featured from './images/featured.png';
 import newAdmin from './images/newAdmin.png';
 
@@ -293,10 +292,9 @@ export const accordionData = [
     {
         header: 'Users',
         bricks: [
-            { name: 'Orders List', route: '/dashboard/orders-list', icon: orderList },
+            { name: 'Order List', route: '/dashboard/order-list', icon: orderList },
             { name: 'Reviews List', route: '/dashboard/reviews-list', icon: reviewsList },
-            { name: 'Questions List', route: '/dashboard/questions-list', icon: questionsList },
-            { name: 'Users List', route: '/dashboard/user-list', icon: userList },
+            { name: 'User List', route: '/dashboard/user-list', icon: userList },
         ],
     },
     {
@@ -319,7 +317,7 @@ export const accordionData = [
         header: 'Management',
         bricks: [
             { name: 'Add New Admin', route: '/dashboard/add-new-admin', icon: newAdmin },
-            { name: 'Role Management', route: '/dashboard/role-management', icon: rolemanagement },
+            { name: 'Admin List', route: '/dashboard/admin-list', icon: adminList },
         ],
     },
 ];

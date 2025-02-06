@@ -303,15 +303,15 @@ button:focus {
 }
 
 .fw-400 {
-    font-weight: 400;
+    font-weight: 400 !important;
 }
 
 .fw-600 {
-    font-weight: 600;
+    font-weight: 600 !important;
 }
 
 .fw-800 {
-    font-weight: 800;
+    font-weight: 800 !important;
 }
 
 .headingBig {
@@ -1616,7 +1616,7 @@ button:focus {
 
 .addressRow .textSmol {
     width: 100%;
-    text-transform: capitalize;
+    text-transform: var(--fontCap);
 }
 
 .addressHeading {
@@ -2499,7 +2499,7 @@ button:focus {
 }
 
 .adminGridItem .text {
-    text-transform: capitalize;
+    text-transform: var(--fontCap);
 }
 
 .adminGridItem .MuiSvgIcon-root {
@@ -2607,60 +2607,33 @@ button:focus {
     border-bottom: 2px solid var(--codeTwo);
 }
 
-.index,
-.seeBtns {
-    gap: 5px;
-    padding: 10px 0px;
-    font-size: 14px;
-    font-weight: 400;
-    text-transform: capitalize;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-}
-
-.email {
+.index, .seeBtns, .email, .datePriceNum {
     width: 100%;
     gap: 5px;
     padding: 10px 0px;
     font-size: 14px;
     font-weight: 400;
-    text-transform: capitalize;
+    font-family: var(--textFamily);
+    text-transform: var(--fontCap);
     display: flex;
     align-items: center;
     justify-content: flex-start;
 }
-
-.datePriceNum {
-    width: 600px;
-    gap: 5px;
-    padding: 10px 0px;
-    font-size: 14px;
-    font-weight: 400;
-    text-transform: capitalize;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .index {
-    width: 100%;
     max-width: 100px;
 }
-
+.datePriceNum {
+    max-width: 600px;
+    justify-content: center;
+}
 .seeBtns {
-    width: 100%;
     max-width: 220px;
 }
-
-.seeBtns button {
-    padding: 5px 10px;
-}
-
-.seeBtns select {
+.seeBtns select, .seeBtns button {
     width: fit-content;
     padding: 5px 10px;
 }
+
 
 .backSection {
     width: 100%;
@@ -2690,7 +2663,7 @@ button:focus {
     gap: 5px;
     font-size: 14px;
     font-weight: 400;
-    text-transform: capitalize;
+    text-transform: var(--fontCap);
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -2738,7 +2711,7 @@ button:focus {
 }
 
 .wannabeAdmin .text {
-    text-transform: capitalize;
+    text-transform: var(--fontCap);
     font-size: 12px;
 }
 

@@ -30,11 +30,10 @@ const ProductCard = ({ id, title, originalPrice, salePrice, stocks, ratings, ima
         return { fullStars: Math.min(adjustedFullStars, 5), halfStar, emptyStars };
     };
     const { fullStars, halfStar, emptyStars } = getStars(ratings);
-    const discountPercentage = ((originalPrice - salePrice) / originalPrice) * 100;
 
+    const discountPercentage = ((originalPrice - salePrice) / originalPrice) * 100;
     const isDiscount = salePrice < originalPrice;
     
-
     return (
         <div className='show-img-detail-sub' onClick={() => navigateToDetails(id)}>
             <img className='product-img-size' src={currentImage} alt={`${title}`} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} />

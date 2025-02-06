@@ -126,6 +126,81 @@ export const getCategory = createAsyncThunk(
     }
 );
 
+export const getUsersByRole = createAsyncThunk(
+    'admin/getUsersByRole',
+    async ({ page, size, role, sortBy, order }, { rejectWithValue, getState }) => {
+        try {
+            const { auth } = getState();
+            const token = auth.token;
+            const response = await axios.get(`${BASE_URL}/api/v1/admin/get-users`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                params: { page, size, role, sortBy, order }
+            });
+            return response.data;
+
+        } catch (error) {
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    return rejectWithValue({ message: error.response.data.message });
+                }
+            }
+        }
+    }
+);
+
+export const getUsersBySearch = createAsyncThunk(
+    'admin/getUsersBySearch',
+    async ({ page, size, search, sortBy, order }, { rejectWithValue, getState }) => {
+        try {
+            const { auth } = getState();
+            const token = auth.token;
+            const response = await axios.get(`${BASE_URL}/api/v1/admin/get-users`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                params: { page, size, search, sortBy, order }
+            });
+            return response.data;
+
+        } catch (error) {
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    return rejectWithValue({ message: error.response.data.message });
+                }
+            }
+        }
+    }
+);
+
+export const getOrders = createAsyncThunk(
+    'admin/getOrders',
+    async ({ page, size, sortBy, order }, { rejectWithValue, getState }) => {
+        try {
+            const { auth } = getState();
+            const token = auth.token;
+            const response = await axios.get(`${BASE_URL}/api/v1/admin/get-orders`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                params: { page, size, sortBy, order }
+            });
+            return response.data;
+
+        } catch (error) {
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    return rejectWithValue({ message: error.response.data.message });
+                }
+            }
+        }
+    }
+);
+
 
 const initialState = {
 
@@ -147,7 +222,40 @@ const initialState = {
 
     categories: [],
     catLoading: false,
-    catError: null
+    catError: null,
+
+    getRolLoading: false,
+    getRolError: null,
+    rolUsers: [],
+    totalRolUsers: 0,
+    totalRolPages: 0,
+    rolPageUsers: 0,
+    isFirstRol: false,
+    isLastRol: false,
+    hasNextRol: false,
+    hasPreviousRol: false,
+
+    getSchLoading: false,
+    getSchError: null,
+    schUsers: [],
+    totalSchUsers: 0,
+    totalSchPages: 0,
+    schPageUsers: 0,
+    isFirstSch: false,
+    isLastSch: false,
+    hasNextSch: false,
+    hasPreviousSch: false,
+
+    orderLoading: false,
+    orderError: null,
+    orders: [],
+    totalOrders: 0,
+    totalOrderPages: 0,
+    pageOrders: 0,
+    isFirstOrd: false,
+    isLastOrd: false,
+    hasNextOrd: false,
+    hasPreviousOrd: false
 };
 
 const adminSlice = createSlice({
@@ -246,7 +354,76 @@ const adminSlice = createSlice({
             .addCase(getCategory.rejected, (state, action) => {
                 state.catLoading = false;
                 state.catError = action.payload?.message || "Something went wrong!";
-            });
+            })
+
+            .addCase(getUsersByRole.pending, (state) => {
+                state.getRolLoading = true;
+                state.getRolError = null;
+            })
+            .addCase(getUsersByRole.fulfilled, (state, action) => {
+                state.getRolLoading = false;
+                state.getRolError = null;
+
+                state.rolUsers = action.payload?.users || [];
+                state.totalRolUsers = action.payload?.totalUsers || 0;
+                state.totalRolPages = action.payload?.totalPages || 0;
+                state.rolPageUsers = action.payload?.pageUsers || 0;
+
+                state.isFirstRol = action.payload?.isFirst || false;
+                state.isLastRol = action.payload?.isLast || false;
+                state.hasNextRol = action.payload?.hasNext || false;
+                state.hasPreviousRol = action.payload?.hasPrevious || false;
+            })
+            .addCase(getUsersByRole.rejected, (state, action) => {
+                state.getRolLoading = false;
+                state.getRolError = action.payload?.message || "Something went wrong!";
+            })
+
+            .addCase(getUsersBySearch.pending, (state) => {
+                state.getSchLoading = true;
+                state.getSchError = null;
+            })
+            .addCase(getUsersBySearch.fulfilled, (state, action) => {
+                state.getSchLoading = false;
+                state.getSchError = null;
+
+                state.schUsers = action.payload?.users || [];
+                state.totalSchUsers = action.payload?.totalUsers || 0;
+                state.totalSchPages = action.payload?.totalPages || 0;
+                state.schPageUsers = action.payload?.pageUsers || 0;
+
+                state.isFirstSch = action.payload?.isFirst || false;
+                state.isLastSch = action.payload?.isLast || false;
+                state.hasNextSch = action.payload?.hasNext || false;
+                state.hasPreviousSch = action.payload?.hasPrevious || false;
+            })
+            .addCase(getUsersBySearch.rejected, (state, action) => {
+                state.getSchLoading = false;
+                state.getSchError = action.payload?.message || "Something went wrong!";
+            })
+
+            .addCase(getOrders.pending, (state) => {
+                state.orderLoading = true;
+                state.orderError = null;
+            })
+            .addCase(getOrders.fulfilled, (state, action) => {
+                state.orderLoading = false;
+                state.orderError = null;
+
+                state.orders = action.payload?.orders || [];
+                state.totalOrders = action.payload?.totalOrders || 0;
+                state.totalOrderPages = action.payload?.totalPages || 0;
+                state.pageOrders = action.payload?.pageOrders || 0;
+
+                state.isFirstOrd = action.payload?.isFirst || false;
+                state.isLastOrd = action.payload?.isLast || false;
+                state.hasNextOrd = action.payload?.hasNext || false;
+                state.hasPreviousOrd = action.payload?.hasPrevious || false;
+            })
+            .addCase(getOrders.rejected, (state, action) => {
+                state.orderLoading = false;
+                state.orderError = action.payload?.message || "Something went wrong!";
+            })
     },
 });
 

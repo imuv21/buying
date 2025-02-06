@@ -10,24 +10,27 @@ import Loader from './components/Loader';
 const Protector = lazy(() => import('./components/Protector'));
 const Layout = lazy(() => import('./components/Layout'));
 
+
 //public
 const AuthPage = lazy(() => import('./pages/auth/AuthPage'));
 const VerifyOTP = lazy(() => import('./pages/auth/VerifyOTP'));
 const ForgotPassword = lazy(() => import('./pages/auth/ForgotPassword'));
 const VerifyPassword = lazy(() => import('./pages/auth/VerifyPassword'));
 
+
 //private
 const Profile = lazy(() => import('./pages/auth/Profile'));
 const Cart = lazy(() => import('./pages/shop/Cart'));
+const PaymentSuccess  = lazy(() => import('./pages/shop/PaymentSuccess'));
 // const Order = lazy(() => import('./pages/shop/Order'));
 // const OrderDetails = lazy(() => import('./pages/shop/OrderDetails'));
+
 
 //public & private
 const Home = lazy(() => import('./pages/Home'));
 const Category = lazy(() => import('./pages/shop/Category'));
 const Search = lazy(() => import('./pages/shop/Search'));
 const ProductDetails = lazy(() => import('./pages/shop/ProductDetails'));
-
 
 // const ContactUs = lazy(() => import('./pages/static/ContactUs'));
 // const AboutUs = lazy(() => import('./pages/static/AboutUs'));
@@ -36,6 +39,7 @@ const ProductDetails = lazy(() => import('./pages/shop/ProductDetails'));
 // const Refund = lazy(() => import('./pages/static/Refund'));
 // const Shipping = lazy(() => import('./pages/static/Shipping'));
 // const Term = lazy(() => import('./pages/static/Term'));
+
 
 //admin panel
 const AdLogin = lazy(() => import('./admin/pages/AdLogin'));
@@ -52,14 +56,13 @@ const UsersList = lazy(() => import('./admin/pages/UsersList'));
 const OrdersList = lazy(() => import('./admin/pages/OrdersList'));
 const AdminOrderDetail = lazy(() => import('./admin/pages/AdminOrderDetail'));
 const ReviewsList = lazy(() => import('./admin/pages/ReviewsList'));
-const QuestionsList = lazy(() => import('./admin/pages/QuestionsList'));
 const UserOrder = lazy(() => import('./admin/pages/UserOrder'));
 const Reviews = lazy(() => import('./admin/pages/Reviews'));
-const Questions = lazy(() => import('./admin/pages/Questions'));
 const ProductDetailAdmin = lazy(() => import('./admin/pages/ProductDetailAdmin'));
 const AdminCategory = lazy(() => import('./admin/pages/AdminCategory'));
 const AddAdmin = lazy(() => import('./admin/pages/AddAdmin'));
 const RoleManagement = lazy(() => import('./admin/pages/RoleManagement'));
+
 
 
 function App() {
@@ -83,14 +86,12 @@ function App() {
               <Route path="add-new-product" element={<AddNewProduct />} />
               <Route path="edit-product/:id" element={<EditProduct />} />
               <Route path="category-list" element={<CategoryList />} />
-              <Route path="orders-list" element={<OrdersList />} />
+              <Route path="order-list" element={<OrdersList />} />
               <Route path='order-details/:orderId' element={<AdminOrderDetail />} />
               <Route path="reviews-list" element={<ReviewsList />} />
-              <Route path="questions-list" element={<QuestionsList />} />
               <Route path="user-list" element={<UsersList />} />
               <Route path="user-list/user-orders/:id" element={<UserOrder />} />
               <Route path="user-list/user-reviews/:id" element={<Reviews />} />
-              <Route path="user-list/user-questions/:id" element={<Questions />} />
               <Route path="product-list" element={<ProductList />} />
               <Route path="product-list/product-details/:id" element={<ProductDetailAdmin />} />
               <Route path="top-rated-products" element={<TopRated />} />
@@ -98,7 +99,7 @@ function App() {
               <Route path="featured-products" element={<Featured />} />
               <Route path="add-new-feature" element={<AddFeature />} />
               <Route path="add-new-admin" element={<AddAdmin />} />
-              <Route path="role-management" element={<RoleManagement />} />
+              <Route path="admin-list" element={<RoleManagement />} />
               <Route path="admin-category" element={<AdminCategory />} />
             </Route>
           </Route>
@@ -107,6 +108,7 @@ function App() {
           <Route element={<Protector user={user} requiredRole="User" redirect="/register" />}>
             <Route path='/profile' element={<Layout><Profile /></Layout>} />
             <Route path='/cart' element={<Layout><Cart /></Layout>} />
+            <Route path='/payment-success' element={<Layout><PaymentSuccess /></Layout>} />
             {/* <Route path='/orders' element={<Layout><Order /></Layout>} />
             <Route path='/order-details/:orderId' element={<Layout><OrderDetails /></Layout>} /> */}
           </Route>

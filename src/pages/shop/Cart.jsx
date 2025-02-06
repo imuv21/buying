@@ -1,25 +1,31 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { showToast } from '../../assets/Schemas';
 import { getAddress } from '../../slices/authSlice';
 import { adjustCart, getCart, removeCart } from '../../slices/productSlice';
+import axios from 'axios';
 import Loader from '../../components/Loader';
-
+import logo from '../../assets/images/logo.jpg';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
+
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 
 const Cart = () => {
 
     const dispatch = useDispatch();
-    const { addresses, getLoading, getError } = useSelector((state) => state.auth);
+    const navigate = useNavigate();
+    const { user, token, addresses, getLoading, getError } = useSelector((state) => state.auth);
     const { cart, totalQuantity, getCartLoading, getCartError, adjustCartError } = useSelector((state) => state.product);
     const totalPrice = cart.reduce((acc, item) => acc + (item.salePrice * item.quantity), 0);
     const [selectedAddress, setSelectedAddress] = useState("");
     const [quantities, setQuantities] = useState({});
     const [isRemoving, setIsRemoving] = useState({});
+    const [paying, setPaying] = useState(false);
 
     useEffect(() => {
         dispatch(getCart());
@@ -95,6 +101,62 @@ const Cart = () => {
             setIsRemoving((prev) => ({ ...prev, [index]: false }));
         }
     };
+
+    const shopping = () => {
+        navigate('/category');
+    }
+
+
+    //payment
+    const razorpayHandler = async (addressId) => {
+
+        if (paying) return;
+        setPaying(true);
+
+        const { data: { key } } = await axios.get(`${BASE_URL}/api/v1/user/get-key`,
+            {
+                headers: { Authorization: `Bearer ${token}` },
+            }
+        );
+        const { data: { payment } } = await axios.post(`${BASE_URL}/api/v1/user/place-order`, { addressId },
+            {
+                headers: { Authorization: `Bearer ${token}` },
+            }
+        );
+
+        const options = {
+            key: key,
+            amount: payment.amount,
+            currency: payment.currency,
+            name: `${user.firstName} ${user.lastName}`,
+            description: "Test Transaction",
+            image: logo,
+            order_id: payment.id,
+            callback_url: `${BASE_URL}/api/v1/user/payment-verification?&userId=${user._id}`,
+            prefill: {
+                name: `${user.firstName} ${user.lastName}`,
+                email: user.email
+            },
+            notes: {
+                name: `${user.firstName} ${user.lastName}`,
+                email: user.email
+            },
+            theme: {
+                color: "#0079c4"
+            },
+            modal: {
+                escape: false,
+                ondismiss: () => {
+                    setPaying(false);
+                    showToast('error', 'Something went wrong!');
+                }
+            }
+        };
+
+        const razor = new window.Razorpay(options);
+        razor.open();
+    };
+
 
 
     if (getCartLoading) {
@@ -172,8 +234,8 @@ const Cart = () => {
                                 )}
                             </select>
                         </div>
-                        <button disabled={!selectedAddress}>Pay Now</button>
-                        <button>Continue Shopping</button>
+                        <button onClick={() => razorpayHandler(selectedAddress)} disabled={totalQuantity === 0 || !selectedAddress || paying}>{paying ? 'Paying...' : 'Pay Now'}</button>
+                        <button onClick={() => shopping()}>Continue Shopping</button>
                     </article>
                 </div>
             </section>

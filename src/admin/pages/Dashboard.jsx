@@ -73,7 +73,7 @@ const Dashboard = () => {
                             <div className="accordion__content" ref={(el) => (contentRefs.current[index] = el)}>
                                 <div className="brickCover">
                                     {accordion.bricks.map((brick, brickIndex) => (
-                                        <div key={brickIndex} className={`brick ${activeBrick === brick.name ? 'active' : ''}`} onClick={() => handleBrickClick(brick.name, brick.route)}>
+                                        <div key={brickIndex} className={`text brick ${activeBrick === brick.name ? 'active' : ''}`} onClick={() => handleBrickClick(brick.name, brick.route)}>
                                             <img src={brick.icon ? brick.icon : ""} alt="icon" /> {brick.name}
                                         </div>
                                     ))}
@@ -83,7 +83,6 @@ const Dashboard = () => {
                         </div>
                     ))}
                 </div>
-
                 <button onClick={logoutHandler} className='logoutBtn' disabled={isLogout}>{isLogout ? `Loging out...` : `Logout`} <ExitToAppIcon /></button>
             </div>
 

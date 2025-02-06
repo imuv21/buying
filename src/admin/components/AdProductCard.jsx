@@ -1,22 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import React, { useState } from 'react';
 import StarIcon from '@mui/icons-material/Star';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
 import StarOutlineIcon from '@mui/icons-material/StarOutline';
-import defaultImg from '../assets/images/defaultImage.jpg';
+import defaultImg from '../../assets/images/defaultImage.jpg';
 
 
-const AdProductCard = ({ name, id, images, ratings, originalPrice, salePrice, stock, onPopup, onInStockChange, navigateToDetails }) => {
+const AdProductCard = ({ id, title, originalPrice, salePrice, ratings, images, navigateToDetails }) => {
 
     const [currentImage, setCurrentImage] = useState((images && images.length > 0 && images[0]) ? images[0] : defaultImg);
     const handleMouseEnter = () => {
         if (images && images.length > 1) {
-            setCurrentImage(images[1]);
+            setCurrentImage(images[1] || defaultImg);
         }
     };
     const handleMouseLeave = () => {
         if (images && images.length > 0) {
-            setCurrentImage(images[0]);
+            setCurrentImage(images[0] || defaultImg);
         }
     };
 
@@ -32,18 +31,12 @@ const AdProductCard = ({ name, id, images, ratings, originalPrice, salePrice, st
     const { fullStars, halfStar, emptyStars } = getStars(ratings);
 
     const discountPercentage = ((originalPrice - salePrice) / originalPrice) * 100;
-    const inStock = Number(stock) > 0;
-
-    useEffect(() => {
-        if (onInStockChange) {
-            onInStockChange(inStock);
-        }
-    }, [inStock, onInStockChange]);
+    const isDiscount = salePrice < originalPrice;
 
     return (
         <div className='show-img-detail-sub' onClick={() => navigateToDetails(id)}>
-            <img className='product-img-size' src={currentImage} alt={`${name}`} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} />
-            <div className="discount-icon">{discountPercentage.toFixed(0)}% OFF</div>
+            <img className='product-img-size' src={currentImage || defaultImg } alt={`${title}`} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} />
+            {isDiscount && <div className="discount-icon">{discountPercentage.toFixed(0)}% OFF</div>}
             <div className='product-detail-info'>
                 <div className="starCont">
                     {[...Array(fullStars || 0)].map((_, i) => (
@@ -55,16 +48,13 @@ const AdProductCard = ({ name, id, images, ratings, originalPrice, salePrice, st
                     {[...Array(emptyStars || 0)].map((_, i) => (
                         <span key={`empty-${i}`} className="dullStar"><StarOutlineIcon /></span>
                     ))}
-                    &nbsp;&nbsp;<span className="text">{ratings}</span>
+                    &nbsp;&nbsp;<span className="textSmol">{ratings}</span>
                 </div>
-                <p className='product-title'>{name.length > 25 ? `${name.substring(0, 25)}...` : name}</p>
-                <div className='flex' style={{ gap: '10px' }}>
-                    <p className='product-discount'>Rs. {Number(originalPrice).toFixed(2)}₹</p>
+                <p className='text'>{title.length > 25 ? `${title.substring(0, 25)}...` : title}</p>
+                {isDiscount ? (<div className='flex' style={{ gap: '10px' }}>
+                    <p className='product-discount' style={isDiscount ? { textDecoration: 'line-through' } : { textDecoration: 'none' }}>Rs. {Number(originalPrice).toFixed(2)}₹</p>
                     <p className='product-price'>Rs. {Number(salePrice).toFixed(2)}₹</p>
-                </div>
-                <button onClick={(event) => { event.stopPropagation(); onPopup(id); }}>
-                    <AddShoppingCartIcon />Add to cart
-                </button>
+                </div>) : (<p className='product-discount'>Rs. {Number(originalPrice).toFixed(2)}₹</p>)}
             </div>
         </div>
     )

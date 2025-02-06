@@ -1,159 +1,136 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-hot-toast';
-import { fetchAdminProducts, deleteProduct } from '../../slices/adminProductSlice';
-import Loader from '../../components/Loader/Loader';
-import ProductCard from '../../components/ProductCard';
-import VerifiedIcon from '@mui/icons-material/Verified';
-import NewReleasesIcon from '@mui/icons-material/NewReleases';
+import { getProductsByCategory } from '../../slices/productSlice';
+
+import AdProductCard from '../../admin/components/AdProductCard';
+import Loader from '../../components/Loader';
+import NorthIcon from '@mui/icons-material/North';
+import SouthIcon from '@mui/icons-material/South';
 
 
 const ProductList = () => {
 
+    const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { products, totalItems, totalPages, numberOfElements, isFirst, isLast, hasNext, hasPrevious, getProLoading, getProError } = useSelector((state) => state.adminProduct);
-    const [isClickedFooter, setIsClickedFooter] = useState(false);
-    const [isDeleted, setIsDeleted] = useState(false);
-    const [selectedProductId, setSelectedProductId] = useState(null);
-    const [page, setPage] = useState(0);
-    const [size, setSize] = useState(20);
-    const [sort, setSort] = useState("PRICE_LOW_TO_HIGH");
-    const deleteIcon = true;
+    const { catProducts, totalCatProducts, totalCatPages, catPageProducts, isFirstCat, isLastCat, hasNextCat, hasPreviousCat, getCatLoading, getCatError } = useSelector((state) => state.product);
+
+    const [page, setPage] = useState(1);
+    const [size, setSize] = useState(5);
+    const [categoryParams] = useSearchParams();
+    const categoryName = categoryParams.get('query');
+    const [sortBy, setSortBy] = useState("salePrice");
+    const [order, setOrder] = useState("asc");
+
 
     useEffect(() => {
-        dispatch(fetchAdminProducts({ page, size, sort }));
-    }, [dispatch, page, size, sort]);
-
-    const handleClickFooter = (productId) => {
-        setSelectedProductId(productId);
-        setIsClickedFooter(true);
-    };
-    const closepopup = (event) => {
-        event.preventDefault();
-        setIsClickedFooter(false);
-        setSelectedProductId(null);
-    };
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        if (isDeleted) return;
-        setIsDeleted(true);
-        try {
-            const response = await dispatch(deleteProduct(selectedProductId)).unwrap();
-            if (response.status) {
-                toast(<div className='flex center g5'> < VerifiedIcon /> {response.message}</div>, { duration: 3000, position: 'top-center', style: { color: 'rgb(0, 189, 0)' }, className: 'success', ariaProps: { role: 'status', 'aria-live': 'polite' } });
-                setSelectedProductId(null);
-                dispatch(fetchAdminProducts({ page, size, sort }));
-            }
-        } catch (error) {
-            toast(<div className='flex center g5'> < NewReleasesIcon /> Something went wrong!</div>, { duration: 3000, position: 'top-center', style: { color: 'red' }, className: 'failed', ariaProps: { role: 'status', 'aria-live': 'polite' } });
-        } finally {
-            
-            setIsDeleted(false);
-            setIsClickedFooter(false);
-        }
-    };
+        dispatch(getProductsByCategory({ page, size, category: categoryName, sortBy, order }));
+    }, [dispatch, page, size, categoryName, sortBy, order]);
 
 
     //pagination
     const handlePageChange = (newPage) => {
-        if (newPage >= 0 && newPage < totalPages) {
+        if (newPage >= 1 && newPage <= totalCatPages) {
             setPage(newPage);
         }
     };
-    const getPageNumbers = (currentPage, totalPages) => {
+    const getPageNumbers = (currentPage, totalCatPages) => {
         const pageNumbers = [];
         const maxPageButtons = 5;
 
-        let startPage = Math.max(0, currentPage - 2);
-        let endPage = Math.min(totalPages - 1, currentPage + 2);
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalCatPages, currentPage + 2);
 
         if (endPage - startPage < maxPageButtons - 1) {
-            if (startPage === 0) {
-                endPage = Math.min(totalPages - 1, startPage + maxPageButtons - 1);
-            } else if (endPage === totalPages - 1) {
-                startPage = Math.max(0, endPage - maxPageButtons + 1);
+            if (startPage === 1) {
+                endPage = Math.min(totalCatPages, startPage + maxPageButtons - 1);
+            } else if (endPage === totalCatPages) {
+                startPage = Math.max(1, endPage - maxPageButtons + 1);
             }
         }
+
         for (let i = startPage; i <= endPage; i++) {
             pageNumbers.push(i);
         }
         return pageNumbers;
     };
-    const pageNumbers = getPageNumbers(page, totalPages);
+    const pageNumbers = getPageNumbers(page, totalCatPages);
+
+    const toggleOrder = () => {
+        setOrder(prevOrder => (prevOrder === "asc" ? "desc" : "asc"));
+    };
 
 
-    if (getProLoading) {
+    if (getCatLoading) {
         return <Loader />;
     }
 
 
     return (
         <Fragment>
-            <article className="sortCat">
-                <div className="flexcol g5">
-                    <h1 className="heading">Products List</h1>
-                    {!getProLoading && !getProError && numberOfElements && totalItems && <p className="text">Showing {numberOfElements} of {totalItems} products</p>}
+            <div className="sortCat">
+                <div className="flexcol">
+                    <h1 className="heading" style={{ textTransform: 'capitalize' }}>{categoryName || `All Products`}</h1>
+                    <p className="text">Showing {catPageProducts} of {totalCatProducts} products</p>
                 </div>
-                <select name="sort" value={sort} onChange={(e) => setSort(e.target.value)}>
-                    <option value="PRICE_HIGH_TO_LOW">Price High to Low</option>
-                    <option value="PRICE_LOW_TO_HIGH">Price Low to High</option>
-                    <option value="A_TO_Z">Alphabetically A to Z</option>
-                    <option value="Z_TO_A">Alphabetically Z to A</option>
-                </select>
-            </article>
 
-            {getProError && <p className="text">Error loading products...</p>}
-            <div className="adminGrid">
-                {!getProLoading && !getProError && products && products.length > 0 ? (products.map((pro, index) => (
-                    <Fragment key={index}>
-                        <ProductCard name={pro.name} deleteIcon={deleteIcon} id={pro.productId} images={pro.image} ratings={pro.finalStar} originalPrice={pro.originalPrice} salePrice={pro.salePrice} onDelete={handleClickFooter} />
-                    </Fragment>
-                ))) : (<p className="text">No products found!</p>)}
+                <div className="flex center g10">
+                    <select name="sort" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                        <option value="salePrice">Price</option>
+                        <option value="title">Title</option>
+                        <option value="averageRating">Ratings</option>
+                    </select>
+
+                    <div className="orderfilter" onClick={toggleOrder}>
+                        {order === "asc" ? <NorthIcon /> : <SouthIcon />}
+                    </div>
+                </div>
             </div>
 
-            <div className="flex center wh">
-                {!getProLoading && !getProError && totalItems > size && (
-                    <div className="pagination" style={{ marginTop: '50px' }}>
+            <div className="categoryGrid">
+                {getCatError ? (<p className='text'>Error loading products!</p>) : !getCatLoading && !getCatError &&
+                    catProducts && catProducts.length > 0 ? catProducts.map((pro) => (
+                        <Fragment key={pro._id}>
+                            <AdProductCard
+                                id={pro._id}
+                                title={pro.title}
+                                originalPrice={pro.originalPrice}
+                                salePrice={pro.salePrice}
+                                ratings={pro.averageRating}
+                                images={pro.images}
+                                navigateToDetails={(id) => navigate(`/product-details/${id}`)}
+                            />
+                        </Fragment>
+                    )) : (<p className='text'>No products found!</p>)}
+            </div>
+
+            <div className="flex center w100">
+                {!getCatLoading && !getCatError && totalCatProducts > size && (
+                    <div className="pagination">
                         <div className="flex wh" style={{ gap: '10px' }}>
-                            <button className='pagination-btn' onClick={() => handlePageChange(0)} disabled={isFirst}>
+                            <button className='pagination-btn' onClick={() => handlePageChange(1)} disabled={isFirstCat}>
                                 First Page
                             </button>
-                            <button className='pagination-btn' onClick={() => handlePageChange(page - 1)} disabled={!hasPrevious}>
+                            <button className='pagination-btn' onClick={() => handlePageChange(page - 1)} disabled={!hasPreviousCat}>
                                 Previous
                             </button>
                         </div>
                         <div className="flex wh" style={{ gap: '10px' }}>
                             {pageNumbers.map(index => (
                                 <button key={index} className={`pagination-btn ${index === page ? 'active' : ''}`} onClick={() => handlePageChange(index)}>
-                                    {index + 1}
+                                    {index}
                                 </button>
                             ))}
                         </div>
                         <div className="flex wh" style={{ gap: '10px' }}>
-                            <button className='pagination-btn' onClick={() => handlePageChange(page + 1)} disabled={!hasNext}>
+                            <button className='pagination-btn' onClick={() => handlePageChange(page + 1)} disabled={!hasNextCat}>
                                 Next
                             </button>
-                            <button className='pagination-btn' onClick={() => handlePageChange(totalPages - 1)} disabled={isLast}>
+                            <button className='pagination-btn' onClick={() => handlePageChange(totalCatPages)} disabled={isLastCat}>
                                 Last Page
                             </button>
                         </div>
-                    </div>
-                )}
-            </div>
-
-
-            <div className={`popup-btn ${isClickedFooter ? 'clicked' : ''}`}>
-                {isClickedFooter && (
-                    <div className="popup">
-                        <form className="popup-wrapper" style={{ gap: '10px' }} onSubmit={handleSubmit}>
-                            <h2 className="headingSmol" style={{ marginBottom: '15px' }}>Are you sure?</h2>
-
-                            <div className="flex wh g10" style={{ marginTop: '15px', justifyContent: 'space-between' }}>
-                                <button type='submit' className="applyBtn" disabled={isDeleted}>{isDeleted ? 'Deleting...' : 'Yes'}</button>
-                                <button type="button" className="applyBtn" onClick={closepopup}>No</button>
-                            </div>
-                        </form>
                     </div>
                 )}
             </div>
