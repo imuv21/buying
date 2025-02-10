@@ -237,6 +237,52 @@ export const deleteAddress = createAsyncThunk(
     }
 );
 
+export const getUserOrders = createAsyncThunk(
+    'auth/getUserOrders',
+    async ({ page, size, status, sortBy, order }, { rejectWithValue, getState }) => {
+        try {
+            const { auth } = getState();
+            const token = auth.token;
+            const response = await axios.get(`${BASE_URL}/api/v1/user/get-user-orders`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                params: { page, size, status, sortBy, order }
+            });
+            return response.data;
+
+        } catch (error) {
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    return rejectWithValue({ message: error.response.data.message });
+                }
+            }
+        }
+    }
+);
+
+export const getOrderDetails = createAsyncThunk(
+    'auth/getOrderDetails',
+    async (orderId, { rejectWithValue }) => {
+        try {
+            const response = await axios.get(`${BASE_URL}/api/v1/user/get-order-details/${orderId}`, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            return response.data;
+
+        } catch (error) {
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    return rejectWithValue({ message: error.response.data.message });
+                }
+            }
+        }
+    }
+);
+
 export const addReview = createAsyncThunk(
     'auth/addReview',
     async (reviewData, { rejectWithValue, getState }) => {
@@ -307,9 +353,24 @@ const initialState = {
     delLoading: false,
     delError: null,
 
+    orderLoading: false,
+    orderError: null,
+    orders: [],
+    totalOrders: 0,
+    totalOrderPages: 0,
+    pageOrders: 0,
+    isFirstOrd: false,
+    isLastOrd: false,
+    hasNextOrd: false,
+    hasPreviousOrd: false,
+
+    orderDetails: null,
+    orderDetailsLoading: false,
+    orderDetailsError: null,
+
     addRevLoading: false,
     addRevErrors: null,
-    addRevError: null,
+    addRevError: null
 };
 
 const authSlice = createSlice({
@@ -531,6 +592,43 @@ const authSlice = createSlice({
             .addCase(deleteAddress.rejected, (state, action) => {
                 state.delLoading = false;
                 state.delError = action.payload?.message || "Something went wrong!";
+            })
+
+            .addCase(getUserOrders.pending, (state) => {
+                state.orderLoading = true;
+                state.orderError = null;
+            })
+            .addCase(getUserOrders.fulfilled, (state, action) => {
+                state.orderLoading = false;
+                state.orderError = null;
+
+                state.orders = action.payload?.orders || [];
+                state.totalOrders = action.payload?.totalOrders || 0;
+                state.totalOrderPages = action.payload?.totalPages || 0;
+                state.pageOrders = action.payload?.pageOrders || 0;
+
+                state.isFirstOrd = action.payload?.isFirst || false;
+                state.isLastOrd = action.payload?.isLast || false;
+                state.hasNextOrd = action.payload?.hasNext || false;
+                state.hasPreviousOrd = action.payload?.hasPrevious || false;
+            })
+            .addCase(getUserOrders.rejected, (state, action) => {
+                state.orderLoading = false;
+                state.orderError = action.payload?.message || "Something went wrong!";
+            })
+
+            .addCase(getOrderDetails.pending, (state) => {
+                state.orderDetailsLoading = true;
+                state.orderDetailsError = null;
+            })
+            .addCase(getOrderDetails.fulfilled, (state, action) => {
+                state.orderDetailsLoading = false;
+                state.orderDetailsError = null;
+                state.orderDetails = action.payload?.orderDetails || null;
+            })
+            .addCase(getOrderDetails.rejected, (state, action) => {
+                state.orderDetailsLoading = false;
+                state.orderDetailsError = action.payload?.message || "Something went wrong!";
             })
 
             .addCase(addReview.pending, (state) => {

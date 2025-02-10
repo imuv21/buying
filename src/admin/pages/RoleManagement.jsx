@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { showToast } from '../../assets/Schemas';
 import { getUsersByRole } from '../../slices/adminSlice';
 import Loader from '../../components/Loader';
@@ -11,6 +12,7 @@ import SouthIcon from '@mui/icons-material/South';
 const RoleManagement = () => {
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { rolUsers, getRolLoading, getRolError, totalRolUsers, totalRolPages, rolPageUsers, isFirstRol, isLastRol, hasNextRol, hasPreviousRol, } = useSelector((state) => state.admin);
 
     const [isClickedFooter, setIsClickedFooter] = useState(false);
@@ -20,7 +22,7 @@ const RoleManagement = () => {
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(5);
     const [role, setRole] = useState("Admin");
-    const [sortBy, setSortBy] = useState("firstName");
+    const [sortBy, setSortBy] = useState("");
     const [order, setOrder] = useState("asc");
 
 
@@ -90,6 +92,10 @@ const RoleManagement = () => {
         setOrder(prevOrder => (prevOrder === "asc" ? "desc" : "asc"));
     };
 
+    const goToAddManager = () => {
+        navigate('/dashboard/add-manager');
+    }
+
     useEffect(() => {
         const handleScroll = () => {
             if (isClickedFooter) {
@@ -111,12 +117,14 @@ const RoleManagement = () => {
         <Fragment>
             <div className="sortCat">
                 <div className="flexcol">
-                    <h1 className="heading" style={{ textTransform: 'capitalize' }}>Admin List</h1>
-                    <p className="text">Showing {rolPageUsers} of {totalRolUsers} admins</p>
+                    <h1 className="heading">Admin List</h1>
+                    <p className="text">Showing {rolPageUsers || 0} of {totalRolUsers || 0} admins</p>
                 </div>
 
                 <div className="flex center g10">
+                    <button onClick={() => goToAddManager()}>Add Manager</button>
                     <select name="sort" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                        <option value="">Sort By</option>
                         <option value="firstName">Name</option>
                         <option value="email">Email</option>
                     </select>
@@ -127,7 +135,7 @@ const RoleManagement = () => {
                 </div>
             </div>
 
-            <article className='usersList'>
+            <div className='usersList'>
                 {getRolError ? (<p className='text'>Error loading admins!</p>) : (
                     <Fragment>
                         <div className="userRow">
@@ -147,37 +155,39 @@ const RoleManagement = () => {
                                 </div>
                             </div>
                         )) : (<p className='text'>No admins found!</p>)}
-
-                        {!getRolLoading && !getRolError && totalRolUsers > size && (
-                            <div className="pagination">
-                                <div className="flex wh" style={{ gap: '10px' }}>
-                                    <button className='pagination-btn' onClick={() => handlePageChange(1)} disabled={isFirstRol}>
-                                        First Page
-                                    </button>
-                                    <button className='pagination-btn' onClick={() => handlePageChange(page - 1)} disabled={!hasPreviousRol}>
-                                        Previous
-                                    </button>
-                                </div>
-                                <div className="flex wh" style={{ gap: '10px' }}>
-                                    {pageNumbers.map(index => (
-                                        <button key={index} className={`pagination-btn ${index === page ? 'active' : ''}`} onClick={() => handlePageChange(index)}>
-                                            {index}
-                                        </button>
-                                    ))}
-                                </div>
-                                <div className="flex wh" style={{ gap: '10px' }}>
-                                    <button className='pagination-btn' onClick={() => handlePageChange(page + 1)} disabled={!hasNextRol}>
-                                        Next
-                                    </button>
-                                    <button className='pagination-btn' onClick={() => handlePageChange(totalRolPages)} disabled={isLastRol}>
-                                        Last Page
-                                    </button>
-                                </div>
-                            </div>
-                        )}
                     </Fragment>
                 )}
-            </article>
+            </div>
+
+            <div className="flex center w100">
+                {!getRolLoading && !getRolError && totalRolUsers > size && (
+                    <div className="pagination">
+                        <div className="flex wh" style={{ gap: '10px' }}>
+                            <button className='pagination-btn' onClick={() => handlePageChange(1)} disabled={isFirstRol}>
+                                First Page
+                            </button>
+                            <button className='pagination-btn' onClick={() => handlePageChange(page - 1)} disabled={!hasPreviousRol}>
+                                Previous
+                            </button>
+                        </div>
+                        <div className="flex wh" style={{ gap: '10px' }}>
+                            {pageNumbers.map(index => (
+                                <button key={index} className={`pagination-btn ${index === page ? 'active' : ''}`} onClick={() => handlePageChange(index)}>
+                                    {index}
+                                </button>
+                            ))}
+                        </div>
+                        <div className="flex wh" style={{ gap: '10px' }}>
+                            <button className='pagination-btn' onClick={() => handlePageChange(page + 1)} disabled={!hasNextRol}>
+                                Next
+                            </button>
+                            <button className='pagination-btn' onClick={() => handlePageChange(totalRolPages)} disabled={isLastRol}>
+                                Last Page
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
 
             <div className={`popup-btn ${isClickedFooter ? 'clicked' : ''}`}>
                 {isClickedFooter && (

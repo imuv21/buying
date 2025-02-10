@@ -32,7 +32,7 @@ const Category = () => {
     const [size, setSize] = useState(5);
     const [categoryParams] = useSearchParams();
     const categoryName = categoryParams.get('query');
-    const [sortBy, setSortBy] = useState("salePrice");
+    const [sortBy, setSortBy] = useState("");
     const [order, setOrder] = useState("asc");
 
 
@@ -160,11 +160,12 @@ const Category = () => {
                 <div className="sortCat">
                     <div className="flexcol">
                         <h1 className="heading" style={{ textTransform: 'capitalize' }}>{categoryName || `All Products`}</h1>
-                        <p className="text">Showing {catPageProducts} of {totalCatProducts} products</p>
+                        <p className="text">Showing {catPageProducts || 0} of {totalCatProducts || 0} products</p>
                     </div>
 
                     <div className="flex center g10">
                         <select name="sort" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                            <option value="">Sort By</option>
                             <option value="salePrice">Price</option>
                             <option value="title">Title</option>
                             <option value="averageRating">Ratings</option>

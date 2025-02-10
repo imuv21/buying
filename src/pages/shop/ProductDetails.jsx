@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTransition, animated } from '@react-spring/web';
 import { getProductDetails, getReviews, addCart } from '../../slices/productSlice';
 import { addReview, clearErrors } from '../../slices/authSlice';
-import { showToast } from '../../assets/Schemas';
+import { formatDateTime, showToast } from '../../assets/Schemas';
 import DOMPurify from 'dompurify';
 import Loader from '../../components/Loader';
 
@@ -33,7 +33,7 @@ const ProductDetails = () => {
     const { addRevLoading, addRevErrors, addRevError } = useSelector((state) => state.auth);
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(5);
-    const [sortBy, setSortBy] = useState("createdAt");
+    const [sortBy, setSortBy] = useState("");
     const [order, setOrder] = useState("desc");
     const initialState = {
         reviewText: '',
@@ -114,7 +114,7 @@ const ProductDetails = () => {
             return showToast('error', `Out of stock!`);
         } else if (quantity >= 10) {
             return showToast('error', `You can't add more than 10 products!`);
-        } 
+        }
         setQuantity((prev) => prev + 1);
     };
     const decrease = () => {
@@ -200,21 +200,6 @@ const ProductDetails = () => {
     const options = { month: 'short', day: 'numeric' };
     const formattedDeliveryStart = deliveryStart.toLocaleDateString('en-US', options);
     const formattedDeliveryEnd = deliveryEnd.toLocaleDateString('en-US', options);
-
-    const formatDateTime = (isoString) => {
-        const date = new Date(isoString);
-        if (isNaN(date)) return null;
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const day = date.getDate().toString().padStart(2, '0');
-        const month = months[date.getMonth()];
-        const year = date.getFullYear();
-        let hours = date.getHours();
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        const ampm = hours >= 12 ? 'PM' : 'AM';
-        hours = hours % 12 || 12;
-        return `${day} ${month} ${year}, ${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
-    };
-
 
 
     //stars
@@ -511,6 +496,7 @@ const ProductDetails = () => {
                         </div>
                         <div className="flex center g10">
                             <select name="sort" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                                <option value="">Sort By</option>
                                 <option value="createdAt">Time & Date</option>
                                 <option value="rating">Ratings</option>
                             </select>

@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { showToast } from '../../assets/Schemas';
-import { getOrders } from '../../slices/adminSlice';
+import { getOrders, updateOrderStatus } from '../../slices/adminSlice';
 import Loader from '../../components/Loader';
 
 import NorthIcon from '@mui/icons-material/North';
@@ -18,34 +18,35 @@ const OrdersList = () => {
     const [isUpdating, setIsUpdating] = useState({});
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(5);
-    const [sortBy, setSortBy] = useState("orderDate");
-    const [order, setOrder] = useState("asc");
+    const [status, setStatus] = useState("");
+    const [sortBy, setSortBy] = useState("");
+    const [order, setOrder] = useState("desc");
 
 
     useEffect(() => {
-        dispatch(getOrders({ page, size, sortBy, order }));
-    }, [dispatch, page, size, sortBy, order]);
+        dispatch(getOrders({ page, size, status, sortBy, order }));
+    }, [dispatch, page, size, status, sortBy, order]);
 
 
-    const handleStatusChange = async (orderId, newStatus) => {
-
+    const handleStatusChange = async (newStatus, orderId) => {
         if (isUpdating[orderId]) return;
         setIsUpdating((prev) => ({ ...prev, [orderId]: true }));
         try {
-            // const response = await dispatch(updateOrderStatus({ orderId, status: newStatus })).unwrap();
-            // if (response.status === "success") {
-            //     showToast('success', `${response.message}`);
-            // } else {
-            //     showToast('error', `${response.message}`);
-            // }
+            const response = await dispatch(updateOrderStatus({ status: newStatus, orderId })).unwrap();
+
+            if (response.status === "success") {
+                showToast('success', `${response.message}`);
+            } else {
+                showToast('error', `${response.message}`);
+            }
         } catch (error) {
-           showToast('error', 'Something went wrong!');
+            showToast('error', 'Something went wrong!');
         } finally {
             setIsUpdating((prev) => ({ ...prev, [orderId]: false }));
         }
     };
     const seeOrder = (id) => {
-        navigate(`/dashboard/orders-list/order-details/${id}`);
+        navigate(`/dashboard/order-list/order-details/${id}`);
     }
 
 
@@ -91,12 +92,19 @@ const OrdersList = () => {
         <Fragment>
             <div className="sortCat">
                 <div className="flexcol">
-                    <h1 className="heading" style={{ textTransform: 'capitalize' }}>Order List</h1>
-                    <p className="text">Showing {pageOrders} of {totalOrders} orders</p>
+                    <h1 className="heading">Order List</h1>
+                    <p className="text">Showing {pageOrders || 0} of {totalOrders || 0} orders</p>
                 </div>
 
                 <div className="flex center g10">
+                    <select name="statusFilter" value={status} onChange={(e) => setStatus(e.target.value)}>
+                        <option value="">Filter</option>
+                        <option value="Placed">Placed</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivered">Delivered</option>
+                    </select>
                     <select name="sort" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                        <option value="">Sort By</option>
                         <option value="orderDate">Time</option>
                         <option value="totalAmount">Price</option>
                     </select>
@@ -107,15 +115,15 @@ const OrdersList = () => {
                 </div>
             </div>
 
-            <article className='usersList'>
+            <div className='usersList'>
                 {orderError ? (<p className='text'>Error loading orders!</p>) : (
                     <Fragment>
                         <div className="userRow">
-                            <div className="index fw-600">Index</div>
-                            <div className="email fw-600">Order ID</div>
-                            <div className="datePriceNum fw-600">Total Products</div>
-                            <div className="datePriceNum fw-600">Total Price</div>
-                            <div className="seeBtns fw-600">Action</div>
+                            <div className="index fw-800">Index</div>
+                            <div className="email fw-800">Order ID</div>
+                            <div className="datePriceNum fw-800">Total Products</div>
+                            <div className="datePriceNum fw-800">Total Price</div>
+                            <div className="seeBtns fw-800">Action</div>
                         </div>
 
                         {orders && orders.length > 0 ? orders.map((order, index) => (
@@ -125,7 +133,7 @@ const OrdersList = () => {
                                 <div className="datePriceNum">{order.itemsCount}</div>
                                 <div className="datePriceNum">{order.totalAmount}</div>
                                 <div className="seeBtns">
-                                    <select name="status" value={order.status} onChange={(e) => handleStatusChange(order._id, e.target.value)} disabled={isUpdating[order._id]} >
+                                    <select name="status" value={order.status} onChange={(e) => handleStatusChange(e.target.value, order._id)} disabled={isUpdating[order._id]} >
                                         <option value="Placed">Placed</option>
                                         <option value="Shipped">Shipped</option>
                                         <option value="Delivered">Delivered</option>
@@ -135,37 +143,39 @@ const OrdersList = () => {
                                 </div>
                             </div>
                         )) : (<p className='text'>No orders found!</p>)}
-
-                        {!orderLoading && !orderError && totalOrders > size && (
-                            <div className="pagination">
-                                <div className="flex wh" style={{ gap: '10px' }}>
-                                    <button className='pagination-btn' onClick={() => handlePageChange(1)} disabled={isFirstOrd}>
-                                        First Page
-                                    </button>
-                                    <button className='pagination-btn' onClick={() => handlePageChange(page - 1)} disabled={!hasPreviousOrd}>
-                                        Previous
-                                    </button>
-                                </div>
-                                <div className="flex wh" style={{ gap: '10px' }}>
-                                    {pageNumbers.map(index => (
-                                        <button key={index} className={`pagination-btn ${index === page ? 'active' : ''}`} onClick={() => handlePageChange(index)}>
-                                            {index}
-                                        </button>
-                                    ))}
-                                </div>
-                                <div className="flex wh" style={{ gap: '10px' }}>
-                                    <button className='pagination-btn' onClick={() => handlePageChange(page + 1)} disabled={!hasNextOrd}>
-                                        Next
-                                    </button>
-                                    <button className='pagination-btn' onClick={() => handlePageChange(totalOrderPages)} disabled={isLastOrd}>
-                                        Last Page
-                                    </button>
-                                </div>
-                            </div>
-                        )}
                     </Fragment>
                 )}
-            </article>
+            </div>
+
+            <div className="flex center w100">
+                {!orderLoading && !orderError && totalOrders > size && (
+                    <div className="pagination">
+                        <div className="flex wh" style={{ gap: '10px' }}>
+                            <button className='pagination-btn' onClick={() => handlePageChange(1)} disabled={isFirstOrd}>
+                                First Page
+                            </button>
+                            <button className='pagination-btn' onClick={() => handlePageChange(page - 1)} disabled={!hasPreviousOrd}>
+                                Previous
+                            </button>
+                        </div>
+                        <div className="flex wh" style={{ gap: '10px' }}>
+                            {pageNumbers.map(index => (
+                                <button key={index} className={`pagination-btn ${index === page ? 'active' : ''}`} onClick={() => handlePageChange(index)}>
+                                    {index}
+                                </button>
+                            ))}
+                        </div>
+                        <div className="flex wh" style={{ gap: '10px' }}>
+                            <button className='pagination-btn' onClick={() => handlePageChange(page + 1)} disabled={!hasNextOrd}>
+                                Next
+                            </button>
+                            <button className='pagination-btn' onClick={() => handlePageChange(totalOrderPages)} disabled={isLastOrd}>
+                                Last Page
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
         </Fragment>
     )
 }

@@ -22,8 +22,8 @@ const VerifyPassword = lazy(() => import('./pages/auth/VerifyPassword'));
 const Profile = lazy(() => import('./pages/auth/Profile'));
 const Cart = lazy(() => import('./pages/shop/Cart'));
 const PaymentSuccess  = lazy(() => import('./pages/shop/PaymentSuccess'));
-// const Order = lazy(() => import('./pages/shop/Order'));
-// const OrderDetails = lazy(() => import('./pages/shop/OrderDetails'));
+const Orders = lazy(() => import('./pages/shop/Orders'));
+const OrderDetails = lazy(() => import('./pages/shop/OrderDetails'));
 
 
 //public & private
@@ -47,8 +47,6 @@ const Dashboard = lazy(() => import('./admin/pages/Dashboard'));
 const AddNewProduct = lazy(() => import('./admin/pages/AddNewProduct'));
 const EditProduct = lazy(() => import('./admin/pages/EditProduct'));
 const ProductList = lazy(() => import('./admin/pages/ProductList'));
-const TopRated = lazy(() => import('./admin/pages/TopRated'));
-const BestSeller = lazy(() => import('./admin/pages/BestSeller'));
 const Featured = lazy(() => import('./admin/pages/Featured'));
 const AddFeature = lazy(() => import('./admin/pages/AddFeature'));
 const CategoryList = lazy(() => import('./admin/pages/CategoryList'));
@@ -56,8 +54,6 @@ const UsersList = lazy(() => import('./admin/pages/UsersList'));
 const OrdersList = lazy(() => import('./admin/pages/OrdersList'));
 const AdminOrderDetail = lazy(() => import('./admin/pages/AdminOrderDetail'));
 const ReviewsList = lazy(() => import('./admin/pages/ReviewsList'));
-const UserOrder = lazy(() => import('./admin/pages/UserOrder'));
-const Reviews = lazy(() => import('./admin/pages/Reviews'));
 const ProductDetailAdmin = lazy(() => import('./admin/pages/ProductDetailAdmin'));
 const AdminCategory = lazy(() => import('./admin/pages/AdminCategory'));
 const AddAdmin = lazy(() => import('./admin/pages/AddAdmin'));
@@ -84,21 +80,17 @@ function App() {
           <Route element={<Protector user={user} requiredRole="Admin" redirect="/admin/login" />}>
             <Route path="/dashboard" element={<Dashboard />}>
               <Route path="add-new-product" element={<AddNewProduct />} />
-              <Route path="edit-product/:id" element={<EditProduct />} />
+              <Route path="edit-product/:productId" element={<EditProduct />} />
               <Route path="category-list" element={<CategoryList />} />
               <Route path="order-list" element={<OrdersList />} />
-              <Route path='order-details/:orderId' element={<AdminOrderDetail />} />
+              <Route path='order-list/order-details/:orderId' element={<AdminOrderDetail />} />
               <Route path="reviews-list" element={<ReviewsList />} />
               <Route path="user-list" element={<UsersList />} />
-              <Route path="user-list/user-orders/:id" element={<UserOrder />} />
-              <Route path="user-list/user-reviews/:id" element={<Reviews />} />
               <Route path="product-list" element={<ProductList />} />
-              <Route path="product-list/product-details/:id" element={<ProductDetailAdmin />} />
-              <Route path="top-rated-products" element={<TopRated />} />
-              <Route path="best-seller-products" element={<BestSeller />} />
+              <Route path="product-list/product-details/:productId" element={<ProductDetailAdmin />} />
               <Route path="featured-products" element={<Featured />} />
-              <Route path="add-new-feature" element={<AddFeature />} />
-              <Route path="add-new-admin" element={<AddAdmin />} />
+              <Route path="add-new-featured-products" element={<AddFeature />} />
+              <Route path="add-manager" element={<AddAdmin />} />
               <Route path="admin-list" element={<RoleManagement />} />
               <Route path="admin-category" element={<AdminCategory />} />
             </Route>
@@ -109,8 +101,8 @@ function App() {
             <Route path='/profile' element={<Layout><Profile /></Layout>} />
             <Route path='/cart' element={<Layout><Cart /></Layout>} />
             <Route path='/payment-success' element={<Layout><PaymentSuccess /></Layout>} />
-            {/* <Route path='/orders' element={<Layout><Order /></Layout>} />
-            <Route path='/order-details/:orderId' element={<Layout><OrderDetails /></Layout>} /> */}
+            <Route path='/orders' element={<Layout><Orders /></Layout>} />
+            <Route path='/order-details/:orderId' element={<Layout><OrderDetails /></Layout>} />
           </Route>
 
           {/* user routes (public) */}

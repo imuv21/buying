@@ -264,11 +264,11 @@ const Profile = () => {
 
                 <div className="profile">
                     <div className="flex verify center-start g5">
-                        <p className="textBig fw-800">{user?.firstName} {user?.lastName}</p> <EditIcon style={{ cursor: 'pointer' }} onClick={(e) => handleClickFooter(e, user)} />
+                        <p className="textBig fw-800">{user?.firstName || 'Unknown'} {user?.lastName || 'Unknown'}</p> <EditIcon style={{ cursor: 'pointer' }} onClick={(e) => handleClickFooter(e, user)} />
                     </div>
                     <div className="flexcol start-center">
                         <p className="text" style={{ color: 'var(--codeThree)' }}>Email</p>
-                        <p className="text verify flex center-start g5" >{user?.email}
+                        <p className="text verify flex center-start g5" >{user?.email || 'example@gmail.com'}
                             {user?.isVerified === 1 ? <VerifiedIcon /> : <NewReleasesIcon style={{ color: 'orange' }} />}
                         </p>
                     </div>

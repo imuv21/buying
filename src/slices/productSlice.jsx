@@ -142,7 +142,7 @@ export const getCart = createAsyncThunk(
 
 export const adjustCart = createAsyncThunk(
     'product/adjustCart',
-    async ({cartItemId, action}, { rejectWithValue, getState }) => {
+    async ({ cartItemId, action }, { rejectWithValue, getState }) => {
         try {
             const { auth } = getState();
             const token = auth.token;
@@ -172,6 +172,77 @@ export const removeCart = createAsyncThunk(
             const token = auth.token;
             const response = await axios.delete(`${BASE_URL}/api/v1/user/remove-from-cart`, {
                 data: cartData,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            return response.data;
+
+        } catch (error) {
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    return rejectWithValue({ message: error.response.data.message });
+                }
+            }
+        }
+    }
+);
+
+
+export const getCategory = createAsyncThunk(
+    'product/getCategory',
+    async ({ page, size, sortBy, order }, { rejectWithValue }) => {
+        try {
+            const response = await axios.get(`${BASE_URL}/api/v1/user/get-category`, {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                params: { page, size, sortBy, order }
+            });
+            return response.data;
+
+        } catch (error) {
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    return rejectWithValue({ message: error.response.data.message });
+                }
+            }
+        }
+    }
+);
+
+export const addCategory = createAsyncThunk(
+    'product/addCategory',
+    async (catData, { rejectWithValue, getState }) => {
+        try {
+            const { auth } = getState();
+            const token = auth.token;
+            const response = await axios.post(`${BASE_URL}/api/v1/admin/add-category`, catData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            return response.data;
+
+        } catch (error) {
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    return rejectWithValue({ message: error.response.data.message });
+                }
+            }
+        }
+    }
+);
+
+export const deleteCategory = createAsyncThunk(
+    'product/deleteCategory',
+    async (catId, { rejectWithValue, getState }) => {
+        try {
+            const { auth } = getState();
+            const token = auth.token;
+            const response = await axios.delete(`${BASE_URL}/api/v1/admin/delete-category/${catId}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
@@ -246,12 +317,34 @@ const initialState = {
 
     removeCartLoading: false,
     removeCartError: null,
+
+
+    categories: [],
+    catLoading: false,
+    catError: null,
+    totalCategories: 0,
+    totalCategoryPages: 0,
+    pageCategories: 0,
+    isFirstCategory: false,
+    isLastCategory: false,
+    hasNextCategory: false,
+    hasPreviousCategory: false,
+
+    addCatLoading: false,
+    addCatError: null,
+
+    delCatLoading: false,
+    delCatError: null,
 };
 
 const productSlice = createSlice({
     name: 'product',
     initialState,
-    reducers: {},
+    reducers: {
+        clearErrors: (state) => {
+            state.addCatError = null;
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(getProductsByCategory.pending, (state) => {
@@ -394,9 +487,58 @@ const productSlice = createSlice({
             .addCase(removeCart.rejected, (state, action) => {
                 state.removeCartLoading = false;
                 state.removeCartError = action.payload?.message || "Something went wrong!";
-            });
+            })
+
+            .addCase(getCategory.pending, (state) => {
+                state.catLoading = true;
+                state.catError = null;
+            })
+            .addCase(getCategory.fulfilled, (state, action) => {
+                state.catLoading = false;
+                state.catError = null;
+
+                state.categories = action.payload?.categories || [];
+                state.totalCategories = action.payload?.totalCategories || 0;
+                state.totalCategoryPages = action.payload?.totalPages || 0;
+                state.pageCategories = action.payload?.pageCategories || 0;
+
+                state.isFirstCategory = action.payload?.isFirst || false;
+                state.isLastCategory = action.payload?.isLast || false;
+                state.hasNextCategory = action.payload?.hasNext || false;
+                state.hasPreviousCategory = action.payload?.hasPrevious || false;
+            })
+            .addCase(getCategory.rejected, (state, action) => {
+                state.catLoading = false;
+                state.catError = action.payload?.message || "Something went wrong!";
+            })
+
+            .addCase(addCategory.pending, (state) => {
+                state.addCatLoading = true;
+                state.addCatError = null;
+            })
+            .addCase(addCategory.fulfilled, (state, action) => {
+                state.addCatLoading = false;
+                state.addCatError = null;
+            })
+            .addCase(addCategory.rejected, (state, action) => {
+                state.addCatLoading = false;
+                state.addCatError = action.payload?.message || "Something went wrong!";
+            })
+
+            .addCase(deleteCategory.pending, (state) => {
+                state.delCatLoading = true;
+                state.delCatError = null;
+            })
+            .addCase(deleteCategory.fulfilled, (state, action) => {
+                state.delCatLoading = false;
+                state.delCatError = null;
+            })
+            .addCase(deleteCategory.rejected, (state, action) => {
+                state.delCatLoading = false;
+                state.delCatError = action.payload?.message || "Something went wrong!";
+            })
     },
 });
 
-
+export const { clearErrors } = productSlice.actions;
 export default productSlice.reducer;

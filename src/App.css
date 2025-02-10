@@ -78,7 +78,7 @@ select,
 textarea,
 input {
     width: 100%;
-    padding: 10px;
+    padding: 8px 10px;
     font-family: var(--textFamily);
     color: var(--codeFour);
     border: var(--borderTwo);
@@ -204,13 +204,13 @@ button:focus {
     padding: 5px 15px;
     background-color: var(--codeTwo);
     color: var(--codeFour);
-    border: none;
+    border: var(--border);
 }
 
 .remove-btn:hover {
     background-color: var(--redCode);
+    border: 1px solid var(--redCode);
     color: var(--codeOne);
-    border: none;
 }
 
 .quantity-btn {
@@ -1124,6 +1124,7 @@ button:focus {
     min-width: 150px;
     height: auto;
     object-fit: contain;
+    aspect-ratio: 4/3;
 }
 
 .product-detail-info {
@@ -1924,86 +1925,6 @@ button:focus {
     display: none;
 }
 
-/* image uploader  */
-.upload-label {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    padding: 10px;
-    border: 2px dashed var(--codeThree);
-    border-radius: var(--brOne);
-    color: var(--codeThree);
-    font-size: 16px;
-}
-
-.preview-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.preview-box {
-    position: relative;
-    width: 70px;
-    height: 70px;
-    border: 1px solid var(--codeThree);
-    border-radius: var(--brOne);
-}
-
-.preview-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.delete-icon {
-    position: absolute;
-    cursor: pointer;
-    width: fit-content;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    top: 2px;
-    right: 2px;
-    background-color: var(--codeOne);
-    border: none;
-    border-radius: 50%;
-    padding: 2px;
-}
-
-.delete-icon:disabled {
-    cursor: not-allowed;
-}
-
-.delete-icon .MuiSvgIcon-root {
-    color: var(--codeFour);
-    width: 18px;
-    size: 18px;
-    transition: var(--trans);
-}
-
-.delete-icon:disabled .MuiSvgIcon-root {
-    color: var(--codeThree);
-}
-
-.delete-icon .loading {
-    animation: rotateInfinity 2s linear infinite;
-}
-
-@keyframes rotateInfinity {
-    from {
-        transform: rotate(360deg);
-    }
-
-    to {
-        transform: rotate(0deg);
-    }
-}
-
 /* r and q section*/
 .randqCont {
     width: 100%;
@@ -2076,6 +1997,7 @@ button:focus {
     justify-content: center;
     gap: 30px;
 }
+
 .cart-summary {
     width: 50%;
     display: flex;
@@ -2089,9 +2011,11 @@ button:focus {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     height: fit-content;
 }
+
 .cart-summary h1 {
     margin-bottom: 20px;
 }
+
 .selectaddress {
     gap: 10px;
     width: 100%;
@@ -2100,6 +2024,7 @@ button:focus {
     align-items: flex-start;
     justify-content: center;
 }
+
 .summary-item {
     width: 100%;
     display: flex;
@@ -2119,6 +2044,7 @@ button:focus {
     border-radius: var(--brTwo);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+
 .cart-item {
     width: 100%;
     padding: 10px;
@@ -2135,6 +2061,7 @@ button:focus {
     height: 120px;
     flex-shrink: 0;
 }
+
 .item-image img {
     width: 100%;
     height: 100%;
@@ -2149,6 +2076,7 @@ button:focus {
     justify-content: flex-start;
     gap: 15px;
 }
+
 .item-info {
     display: flex;
     flex-direction: column;
@@ -2156,18 +2084,206 @@ button:focus {
     justify-content: flex-start;
     gap: 3px;
 }
+
 .quantity-controls {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 2px;
 }
+
 .quantity {
     width: fit-content;
     padding: 0px 16px;
     font-family: var(--textFamily);
     text-align: center;
 }
+
+
+/* order and order detail page  */
+.orderBoxCont {
+    width: 100%;
+    gap: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.orderBox {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: var(--codeOne);
+    border-radius: var(--brTwo);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: var(--trans);
+}
+
+.orderBox:hover {
+    transform: translateY(-3px);
+}
+
+.orderSubBox {
+    gap: 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.OrderBtns {
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+
+/* order details */
+
+.order-detail-cont {
+    width: 100%;
+    gap: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.order-detail {
+    width: 100%;
+    padding: 20px;
+    gap: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(251, 251, 251);
+    border: var(--border);
+}
+
+.order-detail-heading {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.orderProduct {
+    width: 40%;
+    gap: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.orderNum {
+    width: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.order-product-cont {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 5px;
+}
+
+.order-product-content {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--codeOne);
+    border: var(--border);
+}
+
+.orderProductImg {
+    width: 120px;
+    height: auto;
+    aspect-ratio: 4/3;
+    object-fit: contain;
+}
+
+.orderProductDetail {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0px;
+}
+
+.order-subtotal {
+    width: 100%;
+    padding: 20px;
+    gap: 10px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    background-color: var(--codeOne);
+    border: var(--border);
+}
+
+.subtotalheading {
+    width: 150px;
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.subtotaldetail {
+    width: 150px;
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.order-address {
+    width: 100%;
+    max-width: 300px;
+    min-width: 200px;
+    padding: 20px;
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(251, 251, 251);
+    border: var(--border);
+}
+
+.order-address .textSmol {
+    text-transform: var(--fontCap);
+}
+
+/* admin category */
+.catImage {
+    justify-content: center !important;
+    margin-right: 30px;
+}
+.catImage img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    aspect-ratio: 4/3;
+}
+
 
 
 
@@ -2329,6 +2445,17 @@ button:focus {
 }
 
 /* image uploader  */
+
+.productForm {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
 .upload-label {
     display: flex;
     align-items: center;
@@ -2367,46 +2494,25 @@ button:focus {
 
 .delete-icon {
     position: absolute;
+    top: 2px;
+    right: 2px;
     cursor: pointer;
     width: fit-content;
     display: flex;
     align-items: center;
     justify-content: center;
-    top: 2px;
-    right: 2px;
     background-color: var(--codeOne);
-    border: none;
     border-radius: 50%;
     padding: 2px;
-}
-
-.delete-icon:disabled {
-    cursor: not-allowed;
-}
-
-.delete-icon .MuiSvgIcon-root {
-    color: var(--codeFour);
-    width: 18px;
-    size: 18px;
     transition: var(--trans);
 }
-
-.delete-icon:disabled .MuiSvgIcon-root {
-    color: var(--codeThree);
+.delete-icon .MuiSvgIcon-root {
+    color: var(--codeFour);
+    width: 15px;
+    height: 15px;
 }
-
-.delete-icon .loading {
-    animation: rotateInfinity 2s linear infinite;
-}
-
-@keyframes rotateInfinity {
-    from {
-        transform: rotate(360deg);
-    }
-
-    to {
-        transform: rotate(0deg);
-    }
+.delete-icon:hover {
+    background-color: var(--redCode);
 }
 
 .suggestions,
@@ -2458,118 +2564,19 @@ button:focus {
     background-color: var(--codeTwo);
 }
 
-/* products section - admin */
-.productForm {
+.backSection {
     width: 100%;
-    max-width: 500px;
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     justify-content: flex-start;
-    gap: 20px;
-}
-
-.adminGrid {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
     gap: 10px;
 }
 
-.adminCatGrid {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 10px;
-}
-
-.adminGridItem {
-    position: relative;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    gap: 8px;
-    cursor: pointer;
-    background: linear-gradient(145deg, #efefef, #f8f8f8);
-    border-radius: var(--brTwo);
-    transition: var(--trans);
-}
-
-.adminGridItem .text {
-    text-transform: var(--fontCap);
-}
-
-.adminGridItem .MuiSvgIcon-root {
-    position: absolute;
+.backSection .MuiSvgIcon-root {
     width: 20px;
     height: 20px;
-    object-fit: contain;
-    aspect-ratio: 1/1;
-    transition: var(--trans);
-    opacity: 0;
-}
-
-.adminGridItem .MuiSvgIcon-root:hover {
-    transform: scale(1.2);
-}
-
-.show-img-detail-sub-admin {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    gap: 10px;
-    opacity: 0;
-    transition: var(--trans);
-    z-index: 10;
-}
-
-.show-img-detail-sub-admin .MuiSvgIcon-root {
-    width: 20px;
-    height: 20px;
-    object-fit: contain;
-    aspect-ratio: 1/1;
     cursor: pointer;
-    transition: var(--trans);
 }
-
-.show-img-detail-sub-admin .MuiSvgIcon-root:hover {
-    transform: scale(1.2);
-}
-
-.show-img-detail-sub:hover .show-img-detail-sub-admin {
-    opacity: 1;
-}
-
-
-.deleteIcon {
-    top: 10px;
-    right: 10px;
-    color: var(--codeFour);
-}
-
-.adminGridItem:hover {
-    box-shadow: 5px 5px 10px #d5d5d5, -5px -5px 10px #ffffff;
-}
-
-.adminGridItem:hover .MuiSvgIcon-root {
-    opacity: 1;
-}
-
-
-.adminGridItem img {
-    width: 100px;
-    height: auto;
-    object-fit: contain;
-    aspect-ratio: 4/3;
-}
-
 
 /* users section - admin */
 .usersList {
@@ -2607,7 +2614,10 @@ button:focus {
     border-bottom: 2px solid var(--codeTwo);
 }
 
-.index, .seeBtns, .email, .datePriceNum {
+.index,
+.seeBtns,
+.email,
+.datePriceNum {
     width: 100%;
     gap: 5px;
     padding: 10px 0px;
@@ -2619,34 +2629,24 @@ button:focus {
     align-items: center;
     justify-content: flex-start;
 }
+
 .index {
     max-width: 100px;
 }
+
 .datePriceNum {
     max-width: 600px;
     justify-content: center;
 }
+
 .seeBtns {
     max-width: 220px;
 }
-.seeBtns select, .seeBtns button {
+
+.seeBtns select,
+.seeBtns button {
     width: fit-content;
     padding: 5px 10px;
-}
-
-
-.backSection {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 10px;
-}
-
-.backSection .MuiSvgIcon-root {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
 }
 
 .reviewAdCont {
@@ -2667,21 +2667,6 @@ button:focus {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-}
-
-.reviewAdImages {
-    width: 100%;
-    gap: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-}
-
-.reviewAdImages img {
-    width: 100px;
-    object-fit: contain;
-    aspect-ratio: 2/1.5;
-    outline: 1px solid var(--codeTwo);
 }
 
 .passwordAdmin span {

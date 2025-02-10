@@ -1,8 +1,9 @@
 import React, { Fragment, useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet-async';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getProductsByCategory } from '../../slices/productSlice';
+import { deleteProduct } from '../../slices/adminSlice';
+import { showToast } from '../../assets/Schemas';
 
 import AdProductCard from '../../admin/components/AdProductCard';
 import Loader from '../../components/Loader';
@@ -16,18 +17,50 @@ const ProductList = () => {
     const dispatch = useDispatch();
     const { catProducts, totalCatProducts, totalCatPages, catPageProducts, isFirstCat, isLastCat, hasNextCat, hasPreviousCat, getCatLoading, getCatError } = useSelector((state) => state.product);
 
+    const [isClickedFooter, setIsClickedFooter] = useState(false);
+    const [proid, setProid] = useState(null);
+    const [deleted, setDeleted] = useState(false);
+
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(5);
-    const [categoryParams] = useSearchParams();
-    const categoryName = categoryParams.get('query');
-    const [sortBy, setSortBy] = useState("salePrice");
+    const [sortBy, setSortBy] = useState("");
     const [order, setOrder] = useState("asc");
 
 
     useEffect(() => {
-        dispatch(getProductsByCategory({ page, size, category: categoryName, sortBy, order }));
-    }, [dispatch, page, size, categoryName, sortBy, order]);
+        dispatch(getProductsByCategory({ page, size, sortBy, order }));
+    }, [dispatch, page, size, sortBy, order]);
 
+
+    const handleClickFooter = (id) => {
+        setProid(id);
+        setIsClickedFooter(true);
+    };
+    const closepopup = () => {
+        setIsClickedFooter(false);
+        setProid(null);
+    };
+
+    const handleDeleteProduct = async () => {
+        if (deleted) return;
+        setDeleted(true);
+        try {
+            const productId = proid;
+            const response = await dispatch(deleteProduct(productId)).unwrap();
+
+            if (response.status === "success") {
+                console.log(response, response.message);
+                showToast('success', `${response.message}`);
+            } else {
+                showToast('error', `${response.message}`);
+            }
+        } catch (error) {
+            showToast('error', 'Something went wrong!');
+        } finally {
+            setDeleted(false);
+            closepopup();
+        }
+    };
 
     //pagination
     const handlePageChange = (newPage) => {
@@ -61,6 +94,17 @@ const ProductList = () => {
         setOrder(prevOrder => (prevOrder === "asc" ? "desc" : "asc"));
     };
 
+    useEffect(() => {
+        const handleScroll = () => {
+            if (isClickedFooter) {
+                setIsClickedFooter(false);
+            }
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [isClickedFooter]);
 
     if (getCatLoading) {
         return <Loader />;
@@ -71,12 +115,13 @@ const ProductList = () => {
         <Fragment>
             <div className="sortCat">
                 <div className="flexcol">
-                    <h1 className="heading" style={{ textTransform: 'capitalize' }}>{categoryName || `All Products`}</h1>
-                    <p className="text">Showing {catPageProducts} of {totalCatProducts} products</p>
+                    <h1 className="heading">All Products</h1>
+                    <p className="text">Showing {catPageProducts || 0} of {totalCatProducts || 0} products</p>
                 </div>
 
                 <div className="flex center g10">
                     <select name="sort" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                        <option value="">Sort By</option>
                         <option value="salePrice">Price</option>
                         <option value="title">Title</option>
                         <option value="averageRating">Ratings</option>
@@ -99,7 +144,9 @@ const ProductList = () => {
                                 salePrice={pro.salePrice}
                                 ratings={pro.averageRating}
                                 images={pro.images}
-                                navigateToDetails={(id) => navigate(`/product-details/${id}`)}
+                                onPopup={handleClickFooter}
+                                navigateToDetails={(id) => navigate(`/dashboard/product-list/product-details/${id}`)}
+                                navigateToEditProduct={(id) => navigate(`/dashboard/edit-product/${id}`)}
                             />
                         </Fragment>
                     )) : (<p className='text'>No products found!</p>)}
@@ -131,6 +178,21 @@ const ProductList = () => {
                                 Last Page
                             </button>
                         </div>
+                    </div>
+                )}
+            </div>
+
+            <div className={`popup-btn ${isClickedFooter ? 'clicked' : ''}`}>
+                {isClickedFooter && (
+                    <div className="popup">
+                        <form className="popup-wrapper" onSubmit={handleDeleteProduct}>
+                            <h2 className="headingSmol">Are you sure?</h2>
+
+                            <div className="flex w100 g10" style={{ justifyContent: 'space-between' }}>
+                                <button type='submit' disabled={deleted}>{deleted ? 'Deleting...' : 'Yes'}</button>
+                                <button type="button" onClick={closepopup}>No</button>
+                            </div>
+                        </form>
                     </div>
                 )}
             </div>

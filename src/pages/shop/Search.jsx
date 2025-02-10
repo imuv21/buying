@@ -32,7 +32,7 @@ const Search = () => {
     const [size, setSize] = useState(5);
     const [searchParams] = useSearchParams();
     const keywords = searchParams.get('query');
-    const [sortBy, setSortBy] = useState("salePrice");
+    const [sortBy, setSortBy] = useState("");
     const [order, setOrder] = useState("asc");
 
 
@@ -161,10 +161,11 @@ const Search = () => {
                 <div className="sortCat">
                     <div className="flexcol">
                         <h1 className="text">Search results for - {keywords || 'No queries found!'}</h1>
-                        <p className="text">Showing {schPageProducts} of {totalSchProduct} products</p>
+                        <p className="text">Showing {schPageProducts || 0} of {totalSchProduct || 0} products</p>
                     </div>
                     <div className="flex center g10">
                         <select name="sort" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                            <option value="">Sort By</option>
                             <option value="salePrice">Price</option>
                             <option value="title">Title</option>
                             <option value="averageRating">Ratings</option>

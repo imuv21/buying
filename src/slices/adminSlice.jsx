@@ -31,13 +31,13 @@ export const addProduct = createAsyncThunk(
 
 export const editProduct = createAsyncThunk(
     'admin/editProduct',
-    async (productData, { rejectWithValue, getState }) => {
+    async ({ productId, productData }, { rejectWithValue, getState }) => {
         try {
             const { auth } = getState();
             const token = auth.token;
-            const response = await axios.patch(`${BASE_URL}/api/v1/admin/edit-product`, productData, {
+            const response = await axios.put(`${BASE_URL}/api/v1/admin/edit-product/${productId}`, productData, {
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${token}`
                 }
             });
@@ -58,9 +58,79 @@ export const deleteProduct = createAsyncThunk(
     'admin/deleteProduct',
     async (productId, { rejectWithValue, getState }) => {
         try {
-            const { admin } = getState();
-            const token = admin.token;
-            const response = await axios.delete(`${BASE_URL}/api/v1/admin/deleteProduct/${productId}`, {
+            const { auth } = getState();
+            const token = auth.token;
+            const response = await axios.delete(`${BASE_URL}/api/v1/admin/delete-product/${productId}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            return response.data;
+
+        } catch (error) {
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    return rejectWithValue({ message: error.response.data.message });
+                }
+            }
+        }
+    }
+);
+
+export const addToFeatured = createAsyncThunk(
+    'admin/addToFeatured',
+    async (productId, { rejectWithValue, getState }) => {
+        try {
+            const { auth } = getState();
+            const token = auth.token;
+            const response = await axios.put(`${BASE_URL}/api/v1/admin/add-to-featured/${productId}`, {}, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            return response.data;
+
+        } catch (error) {
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    return rejectWithValue({ message: error.response.data.message });
+                }
+            }
+        }
+    }
+);
+
+export const getFeatured = createAsyncThunk(
+    'admin/getFeatured',
+    async ({ page, size, sortBy, order }, { rejectWithValue }) => {
+        try {
+            const response = await axios.get(`${BASE_URL}/api/v1/user/get-featured`, {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                params: { page, size, sortBy, order }
+            });
+            return response.data;
+
+        } catch (error) {
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    return rejectWithValue({ message: error.response.data.message });
+                }
+            }
+        }
+    }
+);
+
+export const removeFromFeatured = createAsyncThunk(
+    'admin/removeFromFeatured',
+    async (productId, { rejectWithValue, getState }) => {
+        try {
+            const { auth } = getState();
+            const token = auth.token;
+            const response = await axios.delete(`${BASE_URL}/api/v1/admin/remove-from-featured/${productId}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
@@ -105,27 +175,6 @@ export const getTags = createAsyncThunk(
     }
 );
 
-export const getCategory = createAsyncThunk(
-    'admin/getCategory',
-    async (_, { rejectWithValue }) => {
-        try {
-            const response = await axios.get(`${BASE_URL}/api/v1/user/get-category`, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            return response.data;
-
-        } catch (error) {
-            if (error.response && error.response.data) {
-                if (error.response.data.message) {
-                    return rejectWithValue({ message: error.response.data.message });
-                }
-            }
-        }
-    }
-);
-
 export const getUsersByRole = createAsyncThunk(
     'admin/getUsersByRole',
     async ({ page, size, role, sortBy, order }, { rejectWithValue, getState }) => {
@@ -153,7 +202,7 @@ export const getUsersByRole = createAsyncThunk(
 
 export const getUsersBySearch = createAsyncThunk(
     'admin/getUsersBySearch',
-    async ({ page, size, search, sortBy, order }, { rejectWithValue, getState }) => {
+    async ({ page, size, search, role, sortBy, order }, { rejectWithValue, getState }) => {
         try {
             const { auth } = getState();
             const token = auth.token;
@@ -162,7 +211,7 @@ export const getUsersBySearch = createAsyncThunk(
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                params: { page, size, search, sortBy, order }
+                params: { page, size, search, role, sortBy, order }
             });
             return response.data;
 
@@ -178,7 +227,7 @@ export const getUsersBySearch = createAsyncThunk(
 
 export const getOrders = createAsyncThunk(
     'admin/getOrders',
-    async ({ page, size, sortBy, order }, { rejectWithValue, getState }) => {
+    async ({ page, size, status, sortBy, order }, { rejectWithValue, getState }) => {
         try {
             const { auth } = getState();
             const token = auth.token;
@@ -187,7 +236,83 @@ export const getOrders = createAsyncThunk(
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
+                params: { page, size, status, sortBy, order }
+            });
+            return response.data;
+
+        } catch (error) {
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    return rejectWithValue({ message: error.response.data.message });
+                }
+            }
+        }
+    }
+);
+
+export const updateOrderStatus = createAsyncThunk(
+    'admin/updateOrderStatus',
+    async ({ status, orderId }, { rejectWithValue, getState }) => {
+        try {
+            const { auth } = getState();
+            const token = auth.token;
+            const response = await axios.patch(`${BASE_URL}/api/v1/admin/update-order-status/${orderId}`, { status }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (response.data.status === "success") {
+                return { status: response.data.status, newStatus: status, orderId, message: response.data.message };
+            } else {
+                return response.data;
+            }
+        } catch (error) {
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    return rejectWithValue({ message: error.response.data.message });
+                }
+            }
+        }
+    }
+);
+
+export const getAllReviews = createAsyncThunk(
+    'admin/getAllReviews',
+    async ({ page, size, sortBy, order }, { rejectWithValue, getState }) => {
+        try {
+            const { auth } = getState();
+            const token = auth.token;
+            const response = await axios.get(`${BASE_URL}/api/v1/admin/get-all-reviews`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 params: { page, size, sortBy, order }
+            });
+            return response.data;
+
+        } catch (error) {
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    return rejectWithValue({ message: error.response.data.message });
+                }
+            }
+        }
+    }
+);
+
+export const deleteReview = createAsyncThunk(
+    'admin/deleteReview',
+    async ({ productId, reviewId }, { rejectWithValue, getState }) => {
+        try {
+            const { auth } = getState();
+            const token = auth.token;
+            const response = await axios.delete(`${BASE_URL}/api/v1/admin/delete-review/${productId}/${reviewId}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
             });
             return response.data;
 
@@ -216,13 +341,26 @@ const initialState = {
     delLoading: false,
     delError: null,
 
+    addFeatLoading: false,
+    addFeatError: null,
+
+    getFeatLoading: false,
+    getFeatError: null,
+    featProducts: [],
+    totalFeatProducts: 0,
+    totalFeatPages: 0,
+    featPageProducts: 0,
+    isFirstFeat: false,
+    isLastFeat: false,
+    hasNextFeat: false,
+    hasPreviousFeat: false,
+
+    remFeatLoading: false,
+    remFeatError: null,
+
     tags: [],
     tagLoading: false,
     tagError: null,
-
-    categories: [],
-    catLoading: false,
-    catError: null,
 
     getRolLoading: false,
     getRolError: null,
@@ -255,7 +393,24 @@ const initialState = {
     isFirstOrd: false,
     isLastOrd: false,
     hasNextOrd: false,
-    hasPreviousOrd: false
+    hasPreviousOrd: false,
+
+    statusLoading: false,
+    statusError: null,
+
+    reviewLoading: false,
+    reviewError: null,
+    reviews: [],
+    totalReviews: 0,
+    totalReviewPages: 0,
+    pageReviews: 0,
+    isFirstRev: false,
+    isLastRev: false,
+    hasNextRev: false,
+    hasPreviousRev: false,
+
+    delRevLoading: false,
+    delRevError: null,
 };
 
 const adminSlice = createSlice({
@@ -267,7 +422,6 @@ const adminSlice = createSlice({
             state.addError = null;
             state.editErrors = null;
             state.editError = null;
-            state.delError = null;
             state.tagError = null;
             state.catError = null;
         }
@@ -299,11 +453,10 @@ const adminSlice = createSlice({
                 state.editErrors = null;
                 state.editError = null;
             })
-            .addCase(editProduct.fulfilled, (state, action) => {
+            .addCase(editProduct.fulfilled, (state) => {
                 state.editLoading = false;
                 state.editErrors = null;
                 state.editError = null;
-                state.products = action.payload?.products || [];
             })
             .addCase(editProduct.rejected, (state, action) => {
                 state.editLoading = false;
@@ -318,14 +471,62 @@ const adminSlice = createSlice({
                 state.delLoading = true;
                 state.delError = null;
             })
-            .addCase(deleteProduct.fulfilled, (state, action) => {
+            .addCase(deleteProduct.fulfilled, (state) => {
                 state.delLoading = false;
                 state.delError = null;
-                state.products = action.payload?.products || [];
             })
             .addCase(deleteProduct.rejected, (state, action) => {
                 state.delLoading = false;
                 state.delError = action.payload?.message || "Something went wrong!";
+            })
+
+            .addCase(addToFeatured.pending, (state) => {
+                state.addFeatLoading = true;
+                state.addFeatError = null;
+            })
+            .addCase(addToFeatured.fulfilled, (state) => {
+                state.addFeatLoading = false;
+                state.addFeatError = null;
+            })
+            .addCase(addToFeatured.rejected, (state, action) => {
+                state.addFeatLoading = false;
+                state.addFeatError = action.payload?.message || "Something went wrong!";
+            })
+
+            .addCase(getFeatured.pending, (state) => {
+                state.getFeatLoading = true;
+                state.getFeatError = null;
+            })
+            .addCase(getFeatured.fulfilled, (state, action) => {
+                state.getFeatLoading = false;
+                state.getFeatError = null;
+
+                state.featProducts = action.payload?.products || [];
+                state.totalFeatProducts = action.payload?.totalProducts || 0;
+                state.totalFeatPages = action.payload?.totalPages || 0;
+                state.featPageProducts = action.payload?.pageProducts || 0;
+
+                state.isFirstFeat = action.payload?.isFirst || false;
+                state.isLastFeat = action.payload?.isLast || false;
+                state.hasNextFeat = action.payload?.hasNext || false;
+                state.hasPreviousFeat = action.payload?.hasPrevious || false;
+            })
+            .addCase(getFeatured.rejected, (state, action) => {
+                state.getFeatLoading = false;
+                state.getFeatError = action.payload?.message || "Something went wrong!";
+            })
+
+            .addCase(removeFromFeatured.pending, (state) => {
+                state.remFeatLoading = true;
+                state.remFeatError = null;
+            })
+            .addCase(removeFromFeatured.fulfilled, (state) => {
+                state.remFeatLoading = false;
+                state.remFeatError = null;
+            })
+            .addCase(removeFromFeatured.rejected, (state, action) => {
+                state.remFeatLoading = false;
+                state.remFeatError = action.payload?.message || "Something went wrong!";
             })
 
             .addCase(getTags.pending, (state) => {
@@ -340,20 +541,6 @@ const adminSlice = createSlice({
             .addCase(getTags.rejected, (state, action) => {
                 state.tagLoading = false;
                 state.tagError = action.payload?.message || "Something went wrong!";
-            })
-
-            .addCase(getCategory.pending, (state) => {
-                state.catLoading = true;
-                state.catError = null;
-            })
-            .addCase(getCategory.fulfilled, (state, action) => {
-                state.catLoading = false;
-                state.catError = null;
-                state.categories = action.payload?.categories || [];
-            })
-            .addCase(getCategory.rejected, (state, action) => {
-                state.catLoading = false;
-                state.catError = action.payload?.message || "Something went wrong!";
             })
 
             .addCase(getUsersByRole.pending, (state) => {
@@ -423,6 +610,58 @@ const adminSlice = createSlice({
             .addCase(getOrders.rejected, (state, action) => {
                 state.orderLoading = false;
                 state.orderError = action.payload?.message || "Something went wrong!";
+            })
+
+            .addCase(updateOrderStatus.pending, (state) => {
+                state.statusLoading = true;
+                state.statusError = null;
+            })
+            .addCase(updateOrderStatus.fulfilled, (state, action) => {
+                state.statusLoading = false;
+                state.statusError = null;
+                state.orders = state.orders.map(order =>
+                    order._id === action.payload.orderId ? { ...order, status: action.payload.newStatus } : order
+                );
+            })
+            .addCase(updateOrderStatus.rejected, (state, action) => {
+                state.statusLoading = false;
+                state.statusError = action.payload?.message || "Something went wrong!";
+            })
+
+            .addCase(getAllReviews.pending, (state) => {
+                state.reviewLoading = true;
+                state.reviewError = null;
+            })
+            .addCase(getAllReviews.fulfilled, (state, action) => {
+                state.reviewLoading = false;
+                state.reviewError = null;
+
+                state.reviews = action.payload?.reviews || [];
+                state.totalReviews = action.payload?.totalReviews || 0;
+                state.totalReviewPages = action.payload?.totalPages || 0;
+                state.pageReviews = action.payload?.pageReviews || 0;
+
+                state.isFirstRev = action.payload?.isFirst || false;
+                state.isLastRev = action.payload?.isLast || false;
+                state.hasNextRev = action.payload?.hasNext || false;
+                state.hasPreviousRev = action.payload?.hasPrevious || false;
+            })
+            .addCase(getAllReviews.rejected, (state, action) => {
+                state.reviewLoading = false;
+                state.reviewError = action.payload?.message || "Something went wrong!";
+            })
+
+            .addCase(deleteReview.pending, (state) => {
+                state.delRevLoading = true;
+                state.delRevError = null;
+            })
+            .addCase(deleteReview.fulfilled, (state) => {
+                state.delRevLoading = false;
+                state.delRevError = null;
+            })
+            .addCase(deleteReview.rejected, (state, action) => {
+                state.delRevLoading = false;
+                state.delRevError = action.payload?.message || "Something went wrong!";
             })
     },
 });

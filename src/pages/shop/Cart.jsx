@@ -106,7 +106,6 @@ const Cart = () => {
         navigate('/category');
     }
 
-
     //payment
     const razorpayHandler = async (addressId) => {
 
@@ -156,8 +155,6 @@ const Cart = () => {
         const razor = new window.Razorpay(options);
         razor.open();
     };
-
-
 
     if (getCartLoading) {
         return <Loader />;

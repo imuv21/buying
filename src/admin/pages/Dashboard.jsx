@@ -56,7 +56,7 @@ const Dashboard = () => {
 
 
     return (
-        <section className="dashboard">
+        <div className="dashboard">
 
             <div className="accordion">
                 <div className='accordionCover'>
@@ -90,7 +90,7 @@ const Dashboard = () => {
                 <Outlet />
             </div>
 
-        </section>
+        </div>
     );
 };
 

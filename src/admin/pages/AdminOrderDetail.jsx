@@ -1,10 +1,12 @@
 import React, { Fragment, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getInvoice } from '../../slices/orderSlice';
+import { formatDateTime } from '../../assets/Schemas';
+import { getOrderDetails } from '../../slices/authSlice';
+
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import Loader from '../../components/Loader/Loader';
+import Loader from '../../components/Loader';
 import DownloadIcon from '@mui/icons-material/Download';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
@@ -14,34 +16,13 @@ const AdminOrderDetail = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { orderId } = useParams();
-    const { invoice, invoiceLoading, invoiceError } = useSelector((state) => state.order);
+    const { orderDetails, orderDetailsLoading, orderDetailsError } = useSelector((state) => state.auth);
 
     useEffect(() => {
         if (orderId) {
-            dispatch(getInvoice(orderId));
+            dispatch(getOrderDetails(orderId));
         }
     }, [dispatch, orderId]);
-
-    const formattedDate = (dateAndTimeString) => {
-        const dateObject = new Date(dateAndTimeString);
-        const dateString = dateObject.toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit"
-        });
-        return `${dateString}`;
-    }
-
-    const formattedTime = (dateAndTimeString) => {
-        const dateObject = new Date(dateAndTimeString);
-        const timeString = dateObject.toLocaleTimeString("en-US", {
-            hour: "numeric",
-            minute: "numeric",
-            second: "numeric",
-            hour12: true
-        });
-        return `${timeString}`;
-    }
 
     const download = () => {
         const input = document.querySelector('.page');
@@ -91,103 +72,98 @@ const AdminOrderDetail = () => {
         });
     };
 
-    const back = () => {
-        navigate('/dashboard/orders-list');
+    const goBack = () => {
+        navigate('/dashboard/order-list');
+    }
+
+    if (orderDetailsLoading) {
+        return <Loader />;
     }
 
 
     return (
         <Fragment>
-
-            {invoiceLoading ? (
-                <Loader />
-            ) : invoiceError ? (
-                <p className="text">Error loading order details!</p>
-            ) : <div className="order-detail-cont">
-                <div className="order-detail">
-                    <div className="flex center-space wh">
-                        <div className="flexcol start g5">
-                            <div className="backSection">
-                                <ArrowBackIosNewIcon onClick={back} /> <p className='headingSmol'>Order Details</p>
+            {orderDetailsError ? (<p className="text">Error loading order details!</p>) : orderDetails &&
+                <div className="order-detail-cont">
+                    <div className="order-detail">
+                        <div className="flex center-space w100">
+                            <div className="flexcol start g5">
+                                <article className='backSection'>
+                                    <ArrowBackIosNewIcon onClick={() => goBack()} /> <p className='headingSmol fw-600'>Order Details</p>
+                                </article>
+                                <p className="textSmol" style={{ marginLeft: '30px' }}>#{orderDetails?._id}</p>
                             </div>
-                            <p className="textSmol">#{invoice?.orderDetails?.orderId}</p>
-                        </div>
-                        <button style={{ width: '120px', textTransform: 'uppercase' }} className='payBtn' onClick={download}><DownloadIcon /> Download</button>
-                    </div>
-                    <div className="order-product-cont">
-                        <div className="order-detail-heading">
-                            <div className="orderProduct">
-                                <p className='text fw-600'>Product Details</p>
-                            </div>
-                            <div className="orderNum hideon600">
-                                <p className='text fw-600'>Item Price</p>
-                            </div>
-                            <div className="orderNum">
-                                <p className='text fw-600'>Quantity</p>
-                            </div>
-                            <div className="orderNum hideon400">
-                                <p className='text fw-600'>Total Amount</p>
-                            </div>
+                            <button style={{ width: '120px', textTransform: 'uppercase' }} onClick={download}><DownloadIcon /> Download</button>
                         </div>
 
-                        {invoice && invoice?.orderDetails && invoice?.orderDetails?.orderItems && invoice?.orderDetails?.orderItems?.length > 0 &&
-                            invoice?.orderDetails?.orderItems.map((product, index) => (
-                                <div className="order-product-content" key={index}>
+                        <div className="order-product-cont">
+                            <div className="order-detail-heading">
+                                <div className="orderProduct">
+                                    <p className='text fw-800'>Product Details</p>
+                                </div>
+                                <div className="orderNum hideon600">
+                                    <p className='text fw-800'>Item Price</p>
+                                </div>
+                                <div className="orderNum">
+                                    <p className='text fw-800'>Quantity</p>
+                                </div>
+                                <div className="orderNum hideon400">
+                                    <p className='text fw-800'>Total Amount</p>
+                                </div>
+                            </div>
+
+                            {orderDetails?.items && orderDetails.items?.length > 0 ? orderDetails.items.map((pro) => (
+                                <div className="order-product-content" key={pro._id}>
                                     <div className="orderProduct">
-                                        <img src={product.imageUrl} className="orderProductImg" alt="" />
+                                        <img src={pro.image} className="orderProductImg" alt={pro.title} />
                                         <div className="orderProductDetail">
-                                            <p className='text fw-600'>{product.itemName}</p>
+                                            <p className='text fw-600'>{pro.title}</p>
                                         </div>
                                     </div>
                                     <div className="orderNum hideon600">
-                                        <p className='textSmol'>{Number(product.sellPrice).toFixed(2)}₹</p>
+                                        <p className='textSmol'>{Number(pro.salePrice).toFixed(2)}₹</p>
                                     </div>
                                     <div className="orderNum">
-                                        <p className='textSmol'>{product.quantity}</p>
+                                        <p className='textSmol'>{pro.quantity}</p>
                                     </div>
                                     <div className="orderNum hideon400">
-                                        <p className='textSmol fw-600'>{Number(product.totalAmount).toFixed(2)}₹</p>
+                                        <p className='textSmol fw-600'>{Number(pro.salePrice * pro.quantity).toFixed(2)}₹</p>
                                     </div>
                                 </div>
-                            ))}
+                            )) : (<p className='text'>No products found!</p>)
+                            }
+                        </div>
+
+                        <div className="order-subtotal">
+                            <div className="subtotalheading">
+                                <p className='text'>Order Status :</p>
+                                <p className='text'>Date & Time :</p>
+                                {/* <p className='text'>Sub Total :</p>
+                                    <p className='text'>Shipping Charge :</p>
+                                    <p className='text'>Estimated Tax :</p> */}
+                                <p className='text fw-800'>Total (INR) :</p>
+                            </div>
+                            <div className="subtotaldetail">
+                                <p className='text'>{orderDetails?.status}</p>
+                                <p className='text'>{formatDateTime(orderDetails?.orderDate)}</p>
+                                <p className='text fw-800'>Rs. {Number(orderDetails?.totalAmount).toFixed(2)}₹</p>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="order-subtotal">
-                        <div className="subtotalheading">
-                            <p className='text'>Order Status :</p>
-                            <p className='text'>Date :</p>
-                            <p className='text'>Time :</p>
-                            <p className='text'>Sub Total :</p>
-                            <p className='text'>Shipping Charge :</p>
-                            <p className='text'>Estimated Tax :</p>
-                            <p className='text fw-600'>Total (INR) :</p>
+                    <div className="order-address">
+                        <div className="flex center-space w100">
+                            <p className='headingSmol fw-600'>Address</p>
                         </div>
-                        <div className="subtotaldetail">
-                            <p className='text'>{invoice?.orderDetails?.status}</p>
-                            <p className='text'>{formattedDate(invoice?.orderDetails?.orderDate)}</p>
-                            <p className='text'>{formattedTime(invoice?.orderDetails?.orderDate)}</p>
-                            <p className='text'>Rs. {Number(invoice?.orderDetails?.totalPrice).toFixed(2)}₹</p>
-                            <p className='text'>Rs. {Number(0).toFixed(2)}₹</p>
-                            <p className='text'>Rs. {Number(0).toFixed(2)}₹</p>
-                            <p className='text fw-600'>Rs. {Number(invoice?.orderDetails?.totalPrice).toFixed(2)}₹</p>
+                        <div className="flexcol start w100 g5">
+                            <p className='textSmol'>Address : {orderDetails?.address?.address}</p>
+                            <p className='textSmol'>Landmark : {orderDetails?.address?.landmark}</p>
+                            <p className='textSmol'>City : {orderDetails?.address?.city}</p>
+                            <p className='textSmol'>Pin Code : {orderDetails?.address?.pincode}</p>
+                            <p className='textSmol'>Number : {orderDetails?.address?.number}</p>
                         </div>
                     </div>
                 </div>
-
-                <div className="order-address">
-                    <div className="flex center-space wh">
-                        <p className='headingSmol'>Address</p>
-                    </div>
-                    <div className="flexcol start wh g5">
-                        <p className='textSmol' style={{ textTransform: 'capitalize' }}>Name : {invoice?.buyer}</p>
-                        <p className='textSmol' style={{ textTransform: 'capitalize' }}>Address : {invoice?.address?.address}</p>
-                        <p className='textSmol' style={{ textTransform: 'capitalize' }}>Landmark : {invoice?.address?.landmark}</p>
-                        <p className='textSmol' style={{ textTransform: 'capitalize' }}>City : {invoice?.address?.city}</p>
-                        <p className='textSmol' style={{ textTransform: 'capitalize' }}>Pin Code : {invoice?.address?.pincode}</p>
-                        <p className='textSmol' style={{ textTransform: 'capitalize' }}>Number : {invoice?.address?.phoneNumber}</p>
-                    </div>
-                </div>
-            </div>
             }
         </Fragment>
     );

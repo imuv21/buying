@@ -14,7 +14,6 @@ export const imagesMobile = [
     bannerOnem, bannerTwom, bannerThreem, bannerOnem
 ];
 
-
 //categories
 import gardening from './images/gardening.jpg';
 import wood from './images/wood.jpg';
@@ -235,6 +234,13 @@ export const products = [
     }
 ];
 
+
+
+
+
+
+
+
 //toasts
 import { toast } from 'react-hot-toast';
 import VerifiedIcon from '@mui/icons-material/Verified';
@@ -274,6 +280,20 @@ export const showToast = (type, message) => {
     }
 };
 
+//format date and time
+export const formatDateTime = (isoString) => {
+    const date = new Date(isoString);
+    if (isNaN(date)) return null;
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    let hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+    return `${day} ${month} ${year}, ${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+};
 
 //admin panel
 import orderList from './images/icons8-orders-list-100.png';
@@ -282,8 +302,6 @@ import userList from './images/icons8-users-list-100.png';
 import productList from './images/icons8-product-list-100.png';
 import addproduct from './images/icons8-add-new-product-100.png';
 import categoryList from './images/icons8-category-list-100.png';
-import topRated from './images/icons8-top-rated-100.png';
-import bestSeller from './images/icons8-best-seller-100.png';
 import adminList from './images/icons8-role-management-100.png';
 import featured from './images/featured.png';
 import newAdmin from './images/newAdmin.png';
@@ -294,38 +312,28 @@ export const accordionData = [
         bricks: [
             { name: 'Order List', route: '/dashboard/order-list', icon: orderList },
             { name: 'Reviews List', route: '/dashboard/reviews-list', icon: reviewsList },
-            { name: 'User List', route: '/dashboard/user-list', icon: userList },
-        ],
+            { name: 'User List', route: '/dashboard/user-list', icon: userList }
+        ]
     },
     {
         header: 'Products',
         bricks: [
             { name: 'Add New Product', route: '/dashboard/add-new-product', icon: addproduct },
             { name: 'Products List', route: '/dashboard/product-list', icon: productList },
-            { name: 'Categories List', route: '/dashboard/category-list', icon: categoryList },
-        ],
-    },
-    {
-        header: 'Analytics',
-        bricks: [
-            { name: 'Top Rated Products', route: '/dashboard/top-rated-products', icon: topRated },
-            { name: 'Best Sellers Products', route: '/dashboard/best-seller-products', icon: bestSeller },
             { name: 'Featured Products', route: '/dashboard/featured-products', icon: featured },
-        ],
+            { name: 'Categories List', route: '/dashboard/category-list', icon: categoryList }
+        ]
     },
     {
         header: 'Management',
         bricks: [
-            { name: 'Add New Admin', route: '/dashboard/add-new-admin', icon: newAdmin },
-            { name: 'Admin List', route: '/dashboard/admin-list', icon: adminList },
-        ],
+            { name: 'Add Manager', route: '/dashboard/add-manager', icon: newAdmin },
+            { name: 'Admin List', route: '/dashboard/admin-list', icon: adminList }
+        ]
     },
 ];
 
-
-
-
-const bla  = [
+const bla = [
     {
         "tags": ["Marvel", "Superhero", "Avengers"],
         "title": "Iron Man Arc Reactor Glow T-Shirt",

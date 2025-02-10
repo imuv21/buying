@@ -5,7 +5,7 @@ import StarOutlineIcon from '@mui/icons-material/StarOutline';
 import defaultImg from '../../assets/images/defaultImage.jpg';
 
 
-const AdProductCard = ({ id, title, originalPrice, salePrice, ratings, images, onPopup, navigateToDetails, navigateToEditProduct }) => {
+const FeatProCard = ({ id, title, originalPrice, salePrice, ratings, images, onPopup, navigateToDetails, navigateToEditProduct }) => {
 
     const [currentImage, setCurrentImage] = useState((images && images.length > 0 && images[0]) ? images[0] : defaultImg);
     const handleMouseEnter = () => {
@@ -57,11 +57,11 @@ const AdProductCard = ({ id, title, originalPrice, salePrice, ratings, images, o
                 </div>) : (<p className='product-discount'>Rs. {Number(originalPrice).toFixed(2)}₹</p>)}
                 <div className="flex center g20 w100">
                     <button className='quantity-btn' onClick={(event) => { event.stopPropagation(); navigateToEditProduct(id); }}>Edit</button>
-                    <button className='remove-btn' onClick={(event) => { event.stopPropagation(); onPopup(id); }}>Delete</button>
+                    <button className='remove-btn' onClick={(event) => { event.stopPropagation(); onPopup(id); }}>Remove</button>
                 </div>
             </div>
         </div>
     )
 };
 
-export default AdProductCard
+export default FeatProCard

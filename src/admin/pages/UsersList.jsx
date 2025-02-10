@@ -17,7 +17,7 @@ const UsersList = () => {
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(5);
     const [role, setRole] = useState("User");
-    const [sortBy, setSortBy] = useState("firstName");
+    const [sortBy, setSortBy] = useState("");
     const [order, setOrder] = useState("asc");
 
 
@@ -76,12 +76,13 @@ const UsersList = () => {
         <Fragment>
             <div className="sortCat">
                 <div className="flexcol">
-                    <h1 className="heading" style={{ textTransform: 'capitalize' }}>User List</h1>
-                    <p className="text">Showing {rolPageUsers} of {totalRolUsers} users</p>
+                    <h1 className="heading">User List</h1>
+                    <p className="text">Showing {rolPageUsers || 0} of {totalRolUsers || 0} users</p>
                 </div>
 
                 <div className="flex center g10">
                     <select name="sort" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                        <option value="">Sort By</option>
                         <option value="firstName">Name</option>
                         <option value="email">Email</option>
                     </select>
@@ -93,7 +94,7 @@ const UsersList = () => {
             </div>
 
             <article className='usersList'>
-                { getRolError ? (<p className='text'>Error loading users!</p>) : (
+                {getRolError ? (<p className='text'>Error loading users!</p>) : (
                     <Fragment>
                         <div className="userRow">
                             <div className="index fw-800">Index</div>
@@ -113,37 +114,39 @@ const UsersList = () => {
                                 </div>
                             </div>
                         )) : (<p className='text'>No users found!</p>)}
-
-                        {!getRolLoading && !getRolError && totalRolUsers > size && (
-                            <div className="pagination">
-                                <div className="flex wh" style={{ gap: '10px' }}>
-                                    <button className='pagination-btn' onClick={() => handlePageChange(1)} disabled={isFirstRol}>
-                                        First Page
-                                    </button>
-                                    <button className='pagination-btn' onClick={() => handlePageChange(page - 1)} disabled={!hasPreviousRol}>
-                                        Previous
-                                    </button>
-                                </div>
-                                <div className="flex wh" style={{ gap: '10px' }}>
-                                    {pageNumbers.map(index => (
-                                        <button key={index} className={`pagination-btn ${index === page ? 'active' : ''}`} onClick={() => handlePageChange(index)}>
-                                            {index}
-                                        </button>
-                                    ))}
-                                </div>
-                                <div className="flex wh" style={{ gap: '10px' }}>
-                                    <button className='pagination-btn' onClick={() => handlePageChange(page + 1)} disabled={!hasNextRol}>
-                                        Next
-                                    </button>
-                                    <button className='pagination-btn' onClick={() => handlePageChange(totalRolPages)} disabled={isLastRol}>
-                                        Last Page
-                                    </button>
-                                </div>
-                            </div>
-                        )}
                     </Fragment>
                 )}
             </article>
+
+            <div className="flex center w100">
+                {!getRolLoading && !getRolError && totalRolUsers > size && (
+                    <div className="pagination">
+                        <div className="flex wh" style={{ gap: '10px' }}>
+                            <button className='pagination-btn' onClick={() => handlePageChange(1)} disabled={isFirstRol}>
+                                First Page
+                            </button>
+                            <button className='pagination-btn' onClick={() => handlePageChange(page - 1)} disabled={!hasPreviousRol}>
+                                Previous
+                            </button>
+                        </div>
+                        <div className="flex wh" style={{ gap: '10px' }}>
+                            {pageNumbers.map(index => (
+                                <button key={index} className={`pagination-btn ${index === page ? 'active' : ''}`} onClick={() => handlePageChange(index)}>
+                                    {index}
+                                </button>
+                            ))}
+                        </div>
+                        <div className="flex wh" style={{ gap: '10px' }}>
+                            <button className='pagination-btn' onClick={() => handlePageChange(page + 1)} disabled={!hasNextRol}>
+                                Next
+                            </button>
+                            <button className='pagination-btn' onClick={() => handlePageChange(totalRolPages)} disabled={isLastRol}>
+                                Last Page
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
         </Fragment>
     )
 }

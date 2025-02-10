@@ -1,6 +1,7 @@
 import React, { useState, Fragment, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addProduct, getCategory, getTags, clearErrors } from '../../slices/adminSlice';
+import { addProduct, getTags, clearErrors } from '../../slices/adminSlice';
+import { getCategory } from '../../slices/productSlice';
 import { showToast } from '../../assets/Schemas';
 import DOMPurify from 'dompurify';
 
@@ -12,7 +13,9 @@ import ClearIcon from '@mui/icons-material/Clear';
 const AddNewProduct = () => {
 
     const dispatch = useDispatch();
-    const { addLoading, addErrors, addError, tags, tagLoading, tagError, categories, catLoading, catError } = useSelector((state) => state.admin);
+    const { addLoading, addErrors, addError, tags } = useSelector((state) => state.admin);
+    const { categories, catLoading, catError } = useSelector((state) => state.product);
+
     const MAX_IMAGES = 5;
     const MAX_FILE_SIZE = 10 * 1024 * 1024;
     const [reviewImages, setReviewImages] = useState([]);
@@ -20,6 +23,7 @@ const AddNewProduct = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedTags, setSelectedTags] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
+
     const initialState = {
         tags: [],
         title: '',
@@ -32,9 +36,13 @@ const AddNewProduct = () => {
     const [formData, setFormData] = useState(initialState);
     const fileInputRef = useRef(null);
 
+    const [page, setPage] = useState(1);
+    const [size, setSize] = useState(10);
+    const [sortBy, setSortBy] = useState("categoryName");
+    const [order, setOrder] = useState("desc");
 
     useEffect(() => {
-        dispatch(getCategory());
+        dispatch(getCategory({ page, size, sortBy, order }));
         dispatch(getTags());
     }, [dispatch]);
 
