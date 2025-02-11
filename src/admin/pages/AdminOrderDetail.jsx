@@ -18,6 +18,8 @@ const AdminOrderDetail = () => {
     const { orderId } = useParams();
     const { orderDetails, orderDetailsLoading, orderDetailsError } = useSelector((state) => state.auth);
 
+    const shippingCharge = 60;
+
     useEffect(() => {
         if (orderId) {
             dispatch(getOrderDetails(orderId));
@@ -136,16 +138,19 @@ const AdminOrderDetail = () => {
 
                         <div className="order-subtotal">
                             <div className="subtotalheading">
+                                <p className='text'>Payment Method :</p>
                                 <p className='text'>Order Status :</p>
                                 <p className='text'>Date & Time :</p>
-                                {/* <p className='text'>Sub Total :</p>
-                                    <p className='text'>Shipping Charge :</p>
-                                    <p className='text'>Estimated Tax :</p> */}
+                                <p className='text'>Subtotal :</p>
+                                <p className='text'>Shipping Charges :</p>
                                 <p className='text fw-800'>Total (INR) :</p>
                             </div>
                             <div className="subtotaldetail">
+                                <p className='text'>{orderDetails?.paymentMethod === "cod" ? "Cash On Delivery" : "Online"}</p>
                                 <p className='text'>{orderDetails?.status}</p>
                                 <p className='text'>{formatDateTime(orderDetails?.orderDate)}</p>
+                                <p className='text'>Rs. {Number(orderDetails?.totalAmount - shippingCharge).toFixed(2)}₹</p>
+                                <p className='text'>Rs. {Number(shippingCharge).toFixed(2)}₹</p>
                                 <p className='text fw-800'>Rs. {Number(orderDetails?.totalAmount).toFixed(2)}₹</p>
                             </div>
                         </div>

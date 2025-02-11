@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { showToast } from '../../assets/Schemas';
-import { getUsersByRole } from '../../slices/adminSlice';
+import { getUsersByRole, makeUser } from '../../slices/adminSlice';
 import Loader from '../../components/Loader';
 
 import NorthIcon from '@mui/icons-material/North';
@@ -21,7 +21,7 @@ const RoleManagement = () => {
 
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(5);
-    const [role, setRole] = useState("Admin");
+    const [role, setRole] = useState("Manager");
     const [sortBy, setSortBy] = useState("");
     const [order, setOrder] = useState("asc");
 
@@ -44,14 +44,15 @@ const RoleManagement = () => {
         if (isSubmitted) return;
         setIsSubmitted(true);
         try {
-            // const response = await dispatch(makeUser(selectedUserId)).unwrap();
+            const response = await dispatch(makeUser(selectedUserId)).unwrap();
 
-            // if (response.status === "success") {
-            //     showToast('success', `${response.message}`);
-            //     closepopup();
-            // } else {
-            //     showToast('error', `${response.message}`);
-            // }
+            if (response.status === "success") {
+                showToast('success', `${response.message}`);
+                closepopup();
+                dispatch(getUsersByRole({ page, size, role, sortBy, order }));
+            } else {
+                showToast('error', `${response.message}`);
+            }
         } catch (error) {
             showToast('error', 'Something went wrong!');
         } finally {
@@ -117,8 +118,8 @@ const RoleManagement = () => {
         <Fragment>
             <div className="sortCat">
                 <div className="flexcol">
-                    <h1 className="heading">Admin List</h1>
-                    <p className="text">Showing {rolPageUsers || 0} of {totalRolUsers || 0} admins</p>
+                    <h1 className="heading">Manager List</h1>
+                    <p className="text">Showing {rolPageUsers || 0} of {totalRolUsers || 0} managers</p>
                 </div>
 
                 <div className="flex center g10">
@@ -136,7 +137,7 @@ const RoleManagement = () => {
             </div>
 
             <div className='usersList'>
-                {getRolError ? (<p className='text'>Error loading admins!</p>) : (
+                {getRolError ? (<p className='text'>Error loading managers!</p>) : (
                     <Fragment>
                         <div className="userRow">
                             <div className="index fw-800">Index</div>
@@ -154,7 +155,7 @@ const RoleManagement = () => {
                                     <button onClick={() => handleClickFooter(user._id)}>Remove</button>
                                 </div>
                             </div>
-                        )) : (<p className='text'>No admins found!</p>)}
+                        )) : (<p className='text'>No managers found!</p>)}
                     </Fragment>
                 )}
             </div>

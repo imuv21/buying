@@ -130,6 +130,7 @@ const AdminCategory = () => {
                 <div className="flex center g10">
                     <select name="sort" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                         <option value="">Sort By</option>
+                        <option value="boughtCounter">Popularity</option>
                         <option value="salePrice">Price</option>
                         <option value="title">Title</option>
                         <option value="averageRating">Ratings</option>

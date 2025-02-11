@@ -49,8 +49,9 @@ const ProductList = () => {
             const response = await dispatch(deleteProduct(productId)).unwrap();
 
             if (response.status === "success") {
-                console.log(response, response.message);
                 showToast('success', `${response.message}`);
+                dispatch(getProductsByCategory({ page, size, sortBy, order }));
+                closepopup();
             } else {
                 showToast('error', `${response.message}`);
             }
@@ -58,7 +59,6 @@ const ProductList = () => {
             showToast('error', 'Something went wrong!');
         } finally {
             setDeleted(false);
-            closepopup();
         }
     };
 
@@ -122,6 +122,7 @@ const ProductList = () => {
                 <div className="flex center g10">
                     <select name="sort" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                         <option value="">Sort By</option>
+                        <option value="boughtCounter">Popularity</option>
                         <option value="salePrice">Price</option>
                         <option value="title">Title</option>
                         <option value="averageRating">Ratings</option>

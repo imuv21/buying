@@ -35,12 +35,13 @@ const AdLogin = () => {
 
     const getLogError = (field) => Array.isArray(logErrors) ? logErrors.find(error => error.path === field) : null;
     const emailLogError = getLogError('email');
+    const roleError = getLogError('role');
     const passwordLogError = getLogError('password');
 
     const handleLogin = async (e) => {
         e.preventDefault();
         if (isSubmitting) return;
-        if (emailLogError || passwordLogError) {
+        if (emailLogError || roleError || passwordLogError) {
             showToast('error', 'Please fix the errors before submitting the form!');
             return;
         }
@@ -49,7 +50,7 @@ const AdLogin = () => {
         try {
             const userData = {
                 email: DOMPurify.sanitize(formData.email),
-                role: 'Admin',
+                role: DOMPurify.sanitize(formData.role),
                 password: DOMPurify.sanitize(formData.password)
             };
             const response = await dispatch(loginUser(userData)).unwrap();
@@ -88,6 +89,14 @@ const AdLogin = () => {
                         <div className="flexcol start-center w100 g5">
                             <input type="email" name='email' autoComplete='email' placeholder='Enter your email...' value={formData.email} onChange={handleChange} />
                             {emailLogError && <p className="error">{emailLogError.msg}</p>}
+                        </div>
+                        <div className="flexcol start-center w100 g5">
+                            <select name="role" id="role" value={formData.role} onChange={handleChange}>
+                                <option value="">Select Role</option>
+                                <option value="Admin">Admin</option>
+                                <option value="Manager">Manager</option>
+                            </select>
+                            {roleError && <p className="error">{roleError.msg}</p>}
                         </div>
                         <div className="flexcol start-center w100 g5">
                             <div className="password">

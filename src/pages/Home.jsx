@@ -3,9 +3,8 @@ import { Helmet } from 'react-helmet-async';
 import { useDispatch } from 'react-redux';
 import { getCart } from '../slices/productSlice';
 import Loader from '../components/Loader';
-import Carousel from '../components/Carousel';
 import Grid from '../components/Grid';
-
+import Carousel from '../components/Carousel';
 
 const TextSlider = lazy(() => import('../components/TextSlider'));
 const ImageSlider = lazy(() => import('../components/ImageSlider'));
@@ -32,9 +31,9 @@ const Home = () => {
                 <TextSlider />
             </Suspense>
             <section className='page flexcol center'>
-                <Grid heading={"Featured Products"} link={'/all-products'} />
-                <Grid heading={"New Arrivals"} link={'/new-arrivals'} />
-                <Carousel heading={"Best Sellers"} link={'/best-sellers'} />
+                <Grid heading={"Featured Products"} link={'/category'} />
+                {/* <Grid heading={"New Arrivals"} link={'/new-arrivals'} />
+                <Carousel heading={"Best Sellers"} link={'/best-sellers'} /> */}
             </section>
         </Fragment>
     );

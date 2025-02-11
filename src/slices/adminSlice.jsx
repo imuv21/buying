@@ -4,6 +4,54 @@ import axios from 'axios';
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 
+export const makeManager = createAsyncThunk(
+    'admin/makeManager',
+    async (userId, { rejectWithValue, getState }) => {
+        try {
+            const { auth } = getState();
+            const token = auth.token;
+            const response = await axios.put(`${BASE_URL}/api/v1/admin/make-manager/${userId}`, {}, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            return response.data;
+
+        } catch (error) {
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    return rejectWithValue({ message: error.response.data.message });
+                }
+            }
+        }
+    }
+);
+
+export const makeUser = createAsyncThunk(
+    'admin/makeUser',
+    async (userId, { rejectWithValue, getState }) => {
+        try {
+            const { auth } = getState();
+            const token = auth.token;
+            const response = await axios.put(`${BASE_URL}/api/v1/admin/make-user/${userId}`, {}, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            return response.data;
+
+        } catch (error) {
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    return rejectWithValue({ message: error.response.data.message });
+                }
+            }
+        }
+    }
+);
+
 export const addProduct = createAsyncThunk(
     'admin/addProduct',
     async (productData, { rejectWithValue, getState }) => {
@@ -329,6 +377,12 @@ export const deleteReview = createAsyncThunk(
 
 const initialState = {
 
+    makeManagerLoading: false,
+    makeManagerError: null,
+
+    makeUserLoading: false,
+    makeUserError: null,
+
     products: [],
     addLoading: false,
     addErrors: null,
@@ -428,6 +482,33 @@ const adminSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+
+            .addCase(makeManager.pending, (state) => {
+                state.makeManagerLoading = true;
+                state.makeManagerError = null;
+            })
+            .addCase(makeManager.fulfilled, (state) => {
+                state.makeManagerLoading = false;
+                state.makeManagerError = null;
+            })
+            .addCase(makeManager.rejected, (state, action) => {
+                state.makeManagerLoading = false;
+                state.makeManagerError = action.payload?.message || "Something went wrong!";
+            })
+
+            .addCase(makeUser.pending, (state) => {
+                state.makeUserLoading = true;
+                state.makeUserError = null;
+            })
+            .addCase(makeUser.fulfilled, (state) => {
+                state.makeUserLoading = false;
+                state.makeUserError = null;
+            })
+            .addCase(makeUser.rejected, (state, action) => {
+                state.makeUserLoading = false;
+                state.makeUserError = action.payload?.message || "Something went wrong!";
+            })
+
             .addCase(addProduct.pending, (state) => {
                 state.addLoading = true;
                 state.addErrors = null;

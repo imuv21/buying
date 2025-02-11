@@ -82,10 +82,10 @@ const ForgotPassword = () => {
                             {emailError && <p className="error">{emailError.msg}</p>}
                         </div>
                         <div className="flexcol start-center w100 g5">
-                            <select name="role" style={{ borderRadius: 'var(--brTwo)' }} value={formData.role} onChange={handleChange}>
+                            <select name="role" id="role" style={{ borderRadius: 'var(--brTwo)' }} value={formData.role} onChange={handleChange}>
                                 <option value="">Select Role</option>
                                 <option value="User">User</option>
-                                <option value="Admin">Admin</option>
+                                <option value="Manager">Manager</option>
                             </select>
                             {roleError && <p className="error">{roleError.msg}</p>}
                             {fopaError && <p className="error">{fopaError}</p>}

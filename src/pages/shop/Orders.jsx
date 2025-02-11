@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { formatDateTime, showToast } from '../../assets/Schemas';
-import { getUserOrders } from '../../slices/authSlice';
+import { cancelOrder, getUserOrders } from '../../slices/authSlice';
 import Loader from '../../components/Loader';
 
 import NorthIcon from '@mui/icons-material/North';
@@ -16,6 +16,10 @@ const Orders = () => {
     const navigate = useNavigate();
     const { orders, orderLoading, orderError, totalOrders, totalOrderPages, pageOrders, isFirstOrd, isLastOrd, hasNextOrd, hasPreviousOrd } = useSelector((state) => state.auth);
 
+    const [isClickedFooter, setIsClickedFooter] = useState(false);
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [selectedOrderId, setSelectedOrderId] = useState(null);
+
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(5);
     const [status, setStatus] = useState("");
@@ -26,6 +30,35 @@ const Orders = () => {
         dispatch(getUserOrders({ page, size, status, sortBy, order }));
     }, [dispatch, page, size, status, sortBy, order]);
 
+
+    const handleClickFooter = (orderId) => {
+        setSelectedOrderId(orderId);
+        setIsClickedFooter(true);
+    };
+    const closepopup = () => {
+        setSelectedOrderId(null);
+        setIsClickedFooter(false);
+    };
+
+    const handleSubmit = async () => {
+        if (isSubmitted) return;
+        setIsSubmitted(true);
+        try {
+            const response = await dispatch(cancelOrder(selectedOrderId)).unwrap();
+
+            if (response.status === "success") {
+                showToast('success', `${response.message}`);
+                closepopup();
+                dispatch(getUserOrders({ page, size, status, sortBy, order }));
+            } else {
+                showToast('error', `${response.message}`);
+            }
+        } catch (error) {
+            showToast('error', 'Something went wrong!');
+        } finally {
+            setIsSubmitted(false);
+        }
+    };
 
     const seeOrder = (orderId) => {
         navigate(`/order-details/${orderId}`);
@@ -115,7 +148,7 @@ const Orders = () => {
                                 </div>
                                 <div className="OrderBtns">
                                     <button onClick={() => seeOrder(order._id)} style={{ padding: '5px 15px' }}>View</button>
-                                    {order.status !== "Delivered" && order.status !== "Cancelled" && <button className='remove-btn'>Cancel</button>}
+                                    {order.status !== "Delivered" && order.status !== "Cancelled" && <button onClick={() => handleClickFooter(order._id)} className='remove-btn'>Cancel</button>}
                                 </div>
                             </div>
                         )) : (<p className='text'>No orders found!</p>)
@@ -149,6 +182,21 @@ const Orders = () => {
                         </div>
                     </div>
                 )}
+
+                <div className={`popup-btn ${isClickedFooter ? 'clicked' : ''}`}>
+                    {isClickedFooter && (
+                        <div className="popup">
+                            <form className="popup-wrapper" style={{ gap: '10px' }} onSubmit={handleSubmit}>
+                                <h1 className="headingSmol">Are you sure?</h1>
+
+                                <div className="flex center w100 g20" style={{ marginTop: '15px' }}>
+                                    <button type='submit' disabled={isSubmitted}>{isSubmitted ? 'Cancelling...' : 'Yes'}</button>
+                                    <button type="button" onClick={closepopup}>No</button>
+                                </div>
+                            </form>
+                        </div>
+                    )}
+                </div>
             </section>
         </Fragment>
     );

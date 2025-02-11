@@ -123,6 +123,7 @@ const OrdersList = () => {
                             <div className="email fw-800">Order ID</div>
                             <div className="datePriceNum fw-800">Total Products</div>
                             <div className="datePriceNum fw-800">Total Price</div>
+                            <div className="datePriceNum fw-800">Payment Method</div>
                             <div className="seeBtns fw-800">Action</div>
                         </div>
 
@@ -132,6 +133,7 @@ const OrdersList = () => {
                                 <div className="email">{order._id}</div>
                                 <div className="datePriceNum">{order.itemsCount}</div>
                                 <div className="datePriceNum">{order.totalAmount}</div>
+                                <div className="datePriceNum">{order.paymentMethod}</div>
                                 <div className="seeBtns">
                                     <select name="status" value={order.status} onChange={(e) => handleStatusChange(e.target.value, order._id)} disabled={isUpdating[order._id]} >
                                         <option value="Placed">Placed</option>

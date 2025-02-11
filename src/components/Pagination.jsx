@@ -66,3 +66,17 @@ const Pagination = ({ page, setPage }) => {
 };
 
 export default Pagination;
+
+
+
+// const ContactUs = lazy(() => import('./pages/static/ContactUs'));
+// const AboutUs = lazy(() => import('./pages/static/AboutUs'));
+// const Privacy = lazy(() => import('./pages/static/Privacy'));
+// const Refund = lazy(() => import('./pages/static/Refund'));
+// const Term = lazy(() => import('./pages/static/Term'));
+
+// <Route path='/contact-us' element={<Layout><ContactUs /></Layout>} />
+// <Route path='/about-us' element={<Layout><AboutUs /></Layout>} />
+// <Route path='/privacy-policy' element={<Layout><Privacy /></Layout>} />
+// <Route path='/return-policy' element={<Layout><Refund /></Layout>} />
+// <Route path='/terms-and-conditions' element={<Layout><Term /></Layout>} />

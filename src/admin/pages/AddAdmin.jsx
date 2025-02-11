@@ -1,8 +1,9 @@
 import React, { useState, Fragment, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getUsersBySearch } from '../../slices/adminSlice';
+import { getUsersBySearch, makeManager } from '../../slices/adminSlice';
 import { showToast } from '../../assets/Schemas';
+
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import SearchIcon from '@mui/icons-material/Search';
 
@@ -35,11 +36,11 @@ const AddAdmin = () => {
         dispatch(getUsersBySearch({ page, size, search: searchInput, role }));
     };
 
-    const makeAdminHandler = async (userId) => {
+    const makeManagerHandler = async (userId) => {
         if (isUpdating[userId]) return;
         setIsUpdating((prev) => ({ ...prev, [userId]: true }));
         try {
-            const response = await dispatch(makeAdmin(userId)).unwrap();
+            const response = await dispatch(makeManager(userId)).unwrap();
 
             if (response.status === "success") {
                 showToast('success', `${response.message}`);
@@ -77,7 +78,7 @@ const AddAdmin = () => {
                 <div className="flexcol g10 start-center w100">
                     {schUsers.map((user) => (
                         <div key={user._id} className="wannabeAdmin">
-                            <button style={{ width: '100px'}} onClick={() => makeAdminHandler(user._id)} disabled={isUpdating[user._id]}>{isUpdating[user._id] ? `Making...` : `Make Admin`}</button>
+                            <button style={{ width: '100px'}} onClick={() => makeManagerHandler(user._id)} disabled={isUpdating[user._id]}>{isUpdating[user._id] ? `Making...` : `Make Manager`}</button>
                             <div className="flexcol g5 start-center w100">
                                 <p className="text">{`${user.firstName}  ${user.lastName}`}</p>
                                 <p className="text fw-600">{user.email?.length > 25 ? `${user.email.substring(0, 25)}...` : user.email}</p>

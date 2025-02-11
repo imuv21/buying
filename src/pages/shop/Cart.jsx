@@ -3,8 +3,9 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { showToast } from '../../assets/Schemas';
-import { getAddress } from '../../slices/authSlice';
+import { getAddress, paymentCod } from '../../slices/authSlice';
 import { adjustCart, getCart, removeCart } from '../../slices/productSlice';
+
 import axios from 'axios';
 import Loader from '../../components/Loader';
 import logo from '../../assets/images/logo.jpg';
@@ -21,8 +22,13 @@ const Cart = () => {
     const navigate = useNavigate();
     const { user, token, addresses, getLoading, getError } = useSelector((state) => state.auth);
     const { cart, totalQuantity, getCartLoading, getCartError, adjustCartError } = useSelector((state) => state.product);
-    const totalPrice = cart.reduce((acc, item) => acc + (item.salePrice * item.quantity), 0);
+
+    const baseAmount = cart.reduce((acc, item) => acc + (item.salePrice * item.quantity), 0);
+    const shippingCharge = 60;
+    const totalAmount = baseAmount + shippingCharge;
+
     const [selectedAddress, setSelectedAddress] = useState("");
+    const [selectedMethod, setSelectedMethod] = useState("online");
     const [quantities, setQuantities] = useState({});
     const [isRemoving, setIsRemoving] = useState({});
     const [paying, setPaying] = useState(false);
@@ -49,6 +55,9 @@ const Cart = () => {
 
     const handleAddressChange = (value) => {
         setSelectedAddress(value);
+    }
+    const handleMethodChange = (value) => {
+        setSelectedMethod(value);
     }
 
 
@@ -107,7 +116,7 @@ const Cart = () => {
     }
 
     //payment
-    const razorpayHandler = async (addressId) => {
+    const razorpayHandler = async (addressId, paymentMethod) => {
 
         if (paying) return;
         setPaying(true);
@@ -117,7 +126,7 @@ const Cart = () => {
                 headers: { Authorization: `Bearer ${token}` },
             }
         );
-        const { data: { payment } } = await axios.post(`${BASE_URL}/api/v1/user/place-order`, { addressId },
+        const { data: { payment } } = await axios.post(`${BASE_URL}/api/v1/user/place-order`, { addressId, paymentMethod },
             {
                 headers: { Authorization: `Bearer ${token}` },
             }
@@ -156,6 +165,26 @@ const Cart = () => {
         razor.open();
     };
 
+    const payment = async (addressId, paymentMethod) => {
+        if (paying) return;
+        setPaying(true);
+        try {
+            const response = await dispatch(paymentCod({ addressId, paymentMethod })).unwrap();
+
+            if (response.status === "success") {
+                showToast('success', `${response.message}`);
+                dispatch(getCart());
+                navigate('/payment-success');
+            } else {
+                showToast('error', `${response.message}`);
+            }
+        } catch (error) {
+            showToast('error', 'Something went wrong!');
+        } finally {
+            setPaying(false);
+        }
+    }
+
     if (getCartLoading) {
         return <Loader />;
     }
@@ -183,7 +212,7 @@ const Cart = () => {
                                 <div className="item-details">
                                     <div className="summary-item">
                                         <h1 className='textBig'>{item.title}</h1>
-                                        <p className='text'>₹{(item.salePrice * item.quantity).toFixed(2)}</p>
+                                        <p className='text'>{(item.salePrice * item.quantity).toFixed(2)}₹</p>
                                     </div>
                                     <div className="item-info">
                                         <p className='text'>Color: {item.color}</p>
@@ -211,8 +240,16 @@ const Cart = () => {
                             <p className='text'>{totalQuantity}</p>
                         </div>
                         <div className="summary-item total">
+                            <p className='text'>Subtotal:</p>
+                            <p className='text'>{baseAmount.toFixed(2)}₹</p>
+                        </div>
+                        <div className="summary-item total">
+                            <p className='text'>Shipping Charges:</p>
+                            <p className='text'>{shippingCharge.toFixed(2)}₹</p>
+                        </div>
+                        <div className="summary-item total">
                             <p className='text fw-800'>Total Price:</p>
-                            <p className='text fw-800'>₹{totalPrice.toFixed(2)}</p>
+                            <p className='text fw-800'>{totalAmount.toFixed(2)}₹</p>
                         </div>
                         <div className="selectaddress">
                             <p className="text">{selectedAddress ? `Selected Address` : `Select Address`}</p>
@@ -230,8 +267,13 @@ const Cart = () => {
                                     <option value="">No addresses found!</option>
                                 )}
                             </select>
+                            <p className="text">{selectedMethod ? `Selected Payment Method` : `Select Payment Method`}</p>
+                            <select name="paymentMethod" value={selectedMethod} onChange={(e) => handleMethodChange(e.target.value)}>
+                                <option value="online">Online</option>
+                                <option value="cod">Cash On Delivery</option>
+                            </select>
                         </div>
-                        <button onClick={() => razorpayHandler(selectedAddress)} disabled={totalQuantity === 0 || !selectedAddress || paying}>{paying ? 'Paying...' : 'Pay Now'}</button>
+                        <button onClick={() => { selectedMethod === "online" ? razorpayHandler(selectedAddress, selectedMethod) : payment(selectedAddress, selectedMethod) }} disabled={totalQuantity === 0 || !selectedAddress || paying}>{paying ? 'Paying...' : 'Pay Now'}</button>
                         <button onClick={() => shopping()}>Continue Shopping</button>
                     </article>
                 </div>

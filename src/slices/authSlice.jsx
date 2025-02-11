@@ -308,6 +308,53 @@ export const addReview = createAsyncThunk(
     }
 );
 
+export const paymentCod = createAsyncThunk(
+    'auth/paymentCod',
+    async ({ addressId, paymentMethod }, { rejectWithValue, getState }) => {
+        try {
+            const { auth } = getState();
+            const token = auth.token;
+            const response = await axios.post(`${BASE_URL}/api/v1/user/place-order`, { addressId, paymentMethod }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            return response.data;
+
+        } catch (error) {
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    return rejectWithValue({ message: error.response.data.message });
+                }
+            }
+        }
+    }
+);
+
+export const cancelOrder = createAsyncThunk(
+    'auth/cancelOrder',
+    async (orderId, { rejectWithValue, getState }) => {
+        try {
+            const { auth } = getState();
+            const token = auth.token;
+            const response = await axios.put(`${BASE_URL}/api/v1/user/cancel-order/${orderId}`, {}, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                if (error.response.data.message) {
+                    return rejectWithValue({ message: error.response.data.message });
+                }
+            }
+        }
+    }
+);
+
 
 const initialState = {
 
@@ -370,7 +417,13 @@ const initialState = {
 
     addRevLoading: false,
     addRevErrors: null,
-    addRevError: null
+    addRevError: null,
+
+    paymentLoading: false,
+    paymentError: null,
+
+    cancelOrderLoading: false,
+    cancelOrderError: null,
 };
 
 const authSlice = createSlice({
@@ -648,6 +701,32 @@ const authSlice = createSlice({
                 } else {
                     state.addRevError = action.payload?.message || "Something went wrong!";
                 }
+            })
+
+            .addCase(paymentCod.pending, (state) => {
+                state.paymentLoading = true;
+                state.paymentError = null;
+            })
+            .addCase(paymentCod.fulfilled, (state) => {
+                state.paymentLoading = false;
+                state.paymentError = null;
+            })
+            .addCase(paymentCod.rejected, (state, action) => {
+                state.paymentLoading = false;
+                state.paymentError = action.payload?.message || "Something went wrong!";
+            })
+
+            .addCase(cancelOrder.pending, (state) => {
+                state.cancelOrderLoading = true;
+                state.cancelOrderError = null;
+            })
+            .addCase(cancelOrder.fulfilled, (state) => {
+                state.cancelOrderLoading = false;
+                state.cancelOrderError = null;
+            })
+            .addCase(cancelOrder.rejected, (state, action) => {
+                state.cancelOrderLoading = false;
+                state.cancelOrderError = action.payload?.message || "Something went wrong!";
             });
     },
 });
