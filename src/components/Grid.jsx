@@ -2,27 +2,19 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getFeatured } from '../slices/adminSlice';
-import { addCart } from '../slices/productSlice';
+
 import ProductCard from './ProductCard';
 import Loader from './Loader';
 
 
-const Grid = ({ heading, link }) => {
+const Grid = ({ heading, link, onPopup }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { featProducts, getFeatLoading, getFeatError } = useSelector((state) => state.admin);
 
-    const [isClickedFooter, setIsClickedFooter] = useState(false);
-    const [proid, setProid] = useState(null);
-    const [stocksData, setStocksData] = useState(0);
-    const [quantity, setQuantity] = useState(1);
-    const [color, setColor] = useState("");
-    const [productSize, setProductSize] = useState("");
-    const [isAdded, setIsAdded] = useState(false);
-
     const [page, setPage] = useState(1);
-    const [size, setSize] = useState(5);
+    const [size, setSize] = useState(10);
     const [sortBy, setSortBy] = useState("");
     const [order, setOrder] = useState("asc");
 
@@ -30,20 +22,6 @@ const Grid = ({ heading, link }) => {
         dispatch(getFeatured({ page, size, sortBy, order }));
     }, [dispatch, page, size, sortBy, order]);
 
-
-    const handleClickFooter = (id, stocks) => {
-        setProid(id);
-        setStocksData(stocks);
-        setIsClickedFooter(true);
-    };
-    const closepopup = () => {
-        setIsClickedFooter(false);
-        setProid(null);
-        setQuantity(1);
-        setColor("");
-        setProductSize("");
-        setStocksData(0);
-    };
 
     if (getFeatLoading) {
         return <Loader />;
@@ -64,7 +42,7 @@ const Grid = ({ heading, link }) => {
                                 stocks={pro.stocks}
                                 ratings={pro.averageRating}
                                 images={pro.images}
-                                onPopup={handleClickFooter}
+                                onPopup={onPopup}
                                 navigateToDetails={(id) => navigate(`/product-details/${id}`)}
                             />
                         </Fragment>

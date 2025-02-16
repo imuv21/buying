@@ -447,37 +447,6 @@ button:focus {
     padding: 0px 10px;
 }
 
-/* .product-priceThree {
-    font-size: 20px;
-    color: var(--codeFive);
-    white-space: nowrap;
-}
-
-.product-discounThree {
-    text-decoration: line-through;
-    font-size: 14px;
-    color: var(--codeThree);
-    white-space: nowrap;
-}
-
-.discount-iconThree {
-    padding: 3px 8px;
-    border-radius: 10px;
-    width: fit-content;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    background-color: var(--codeFive);
-    font-size: 12px;
-    color: white;
-    font-weight: 400;
-    white-space: nowrap;
-} */
-
-
-
-
 .fixLogo {
     width: 50px;
     z-index: 2;
@@ -753,6 +722,24 @@ button:focus {
 }
 
 /* header  */
+.catHeader {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    background-color: var(--codeSix);
+    position: sticky;
+    top: -1px;
+    z-index: 2;
+}
+
+.catHeader a {
+    color: var(--codeOne);
+    font-weight: 800;
+}
+
 .header {
     width: 100%;
     display: flex;
@@ -1086,43 +1073,34 @@ button:focus {
     justify-content: center;
 }
 
-/* Card Carousel - product card */
-.product-slider-cont {
-    position: relative;
-    width: 100%;
-}
-
-.show-img-detail-sup {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    border-radius: var(--brOne);
-    padding: 10px;
-    width: fit-content;
-}
-
+/* product card */
 .show-img-detail-sub {
+    width: 100%;
+    min-width: 150px;
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     text-align: center;
     gap: 10px;
     box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
     border-radius: var(--brOne);
     background-color: var(--codeOne);
     padding: 10px;
-    width: 100%;
     transition: var(--trans);
+}
+.priceFlexbox {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
 }
 
 .product-img-size {
     width: 100%;
     min-width: 150px;
-    height: auto;
     object-fit: contain;
     aspect-ratio: 4/3;
 }
@@ -1659,8 +1637,9 @@ button:focus {
 .categoryGrid {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(5, 1fr);
+    row-gap: 20px;
+    column-gap: 20px;
 }
 
 .orderfilter {
@@ -1830,7 +1809,7 @@ button:focus {
 .smolImg {
     width: 60px;
     height: 60px;
-    object-fit: fill;
+    object-fit: cover;
     cursor: pointer;
     filter: drop-shadow(2px 2px 2px var(--codeOne));
     transition: var(--trans);
@@ -2272,17 +2251,107 @@ button:focus {
     text-transform: var(--fontCap);
 }
 
+/* home page */
+.categoryCont {
+    width: 100%;
+    gap: 40px;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.catBox {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    overflow: hidden;
+    border-radius: var(--brTwo);
+}
+
+.catBox img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.catBox .heading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--codeOne);
+    background: rgba(0, 0, 0, 0.5);
+    transition: opacity 0.3s ease;
+}
+
+.catBox:hover .heading {
+    opacity: 1;
+}
+
+.couponCont {
+    width: 100%;
+    background-color: #DFE5F3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0px 25px;
+}
+
+.couponBoxTwo {
+    width: 100%;
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.couponBoxTwo .headingBig {
+    font-size: 40px;
+    font-weight: 800;
+}
+
+.couponBoxTwo button {
+    width: fit-content;
+    margin-top: 20px;
+}
+
+.couponBox {
+    width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.couponBox img {
+    width: 100%;
+    max-width: 280px;
+    height: auto;
+    object-fit: contain;
+}
+
+
 /* admin category */
+
 .catImage {
     justify-content: center !important;
     margin-right: 30px;
 }
+
 .catImage img {
     width: 100%;
     height: auto;
     object-fit: contain;
     aspect-ratio: 4/3;
 }
+
 
 
 
@@ -2506,11 +2575,13 @@ button:focus {
     padding: 2px;
     transition: var(--trans);
 }
+
 .delete-icon .MuiSvgIcon-root {
     color: var(--codeFour);
     width: 15px;
     height: 15px;
 }
+
 .delete-icon:hover {
     background-color: var(--redCode);
 }
@@ -2703,20 +2774,43 @@ button:focus {
 
 
 
-/* breakpoints  */
 
-@media (max-width: 1200px) {}
 
-@media (max-width: 1100px) {
 
-    select,
-    textarea,
-    input {
-        padding: 7px 10px;
+@media (max-width: 1300px) {
+    .grid, .categoryGrid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 1200px) {
+    .page {
+        padding: 20px 20px 0px 20px;
+        gap: 20px;
+    }
+}
+
+@media (max-width: 900px) {
+
+    .product-price {
+        font-size: 14px;
     }
 
-    button {
-        padding: 6px 15px;
+    .product-priceTwo {
+        font-size: 20px;
+    }
+
+    .product-discount {
+        font-size: 12px;
+    }
+
+    .product-discounTwo {
+        font-size: 15px;
+    }
+
+    .scrollToTop {
+        bottom: 70px;
+        right: 10px;
     }
 
     .headingBig {
@@ -2743,33 +2837,21 @@ button:focus {
         font-size: 10px;
     }
 
+    .logo,
     .fixLogo {
         width: 40px;
-    }
-
-    .logo {
-        width: 40px;
-    }
-
-    .page {
-        padding: 20px;
-        gap: 20px;
     }
 
     .slider-container {
         height: 400px;
     }
-}
 
-@media (max-width: 1000px) {}
-
-@media (max-width: 900px) {
     .footer-section {
         padding-left: 30px;
     }
 
-    .slider-container {
-        height: 350px;
+    .grid, .categoryGrid {
+        grid-template-columns: repeat(3, 1fr);
     }
 }
 
@@ -2863,6 +2945,48 @@ button:focus {
 }
 
 @media (max-width: 768px) {
+
+    .couponCont {
+        width: 100%;
+        background-color: #DFE5F3;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        padding: 20px 0px 0px 20px;
+    }
+    .couponBoxTwo {
+        width: 50%;
+        gap: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+    }
+    .couponBoxTwo .headingBig {
+        font-size: 40px;
+        font-weight: 800;
+    }
+    .couponBoxTwo button {
+        width: fit-content;
+        margin-top: 20px;
+    }
+    .couponBox {
+        margin-top: -100px;
+        width: 100%;
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-end;
+    }
+    .couponBox img {
+        width: 100%;
+        max-width: 280px;
+        height: auto;
+        object-fit: contain;
+    }
+    
+
+
     .searchCont {
         width: 100%;
         max-width: 300px;
@@ -2890,7 +3014,51 @@ button:focus {
     }
 }
 
+@media (max-width: 630px) {
+    .grid, .categoryGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .categoryCont {
+        width: 100%;
+        margin-bottom: -50px;
+        gap: 10px;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .catBox {
+        position: relative;
+        width: 300px;
+        height: 300px;
+        overflow: hidden;
+        border-radius: var(--brTwo);
+    }
+}
+
 @media (max-width: 600px) {
+    .marquee-slider p {
+        display: inline-block;
+        position: relative;
+        text-transform: uppercase;
+        font-size: 20px;
+        margin: 0px;
+        padding: 10px 20px;
+    }
+    
+    .marquee-slider p::before {
+        content: ".";
+        position: absolute;
+        left: -0px;
+        font-size: 25px;
+        font-weight: 900;
+        top: 18.5px;
+        transform: translateY(-50%);
+    }
+
     .scrollToTop {
         bottom: 60px;
         right: 10px;
@@ -2898,6 +3066,17 @@ button:focus {
 }
 
 @media (max-width: 570px) {
+
+    .discount-icon {
+        top: 15px;
+        left: 15px;
+        padding: 2px 8px;
+        font-size: 10px;
+    }
+
+    .shopBtn {
+        padding: 3px;
+    }
 
     .formCont .headingBig {
         padding-bottom: 10px;
@@ -2912,6 +3091,7 @@ button:focus {
     }
 
     .panel .content {
+        gap: 10px;
         padding: 0.5rem 1rem;
     }
 
@@ -2922,17 +3102,33 @@ button:focus {
     }
 
     .container:before {
-        bottom: 60%;
+        bottom: 65%;
         left: 50%;
     }
 
     .container.sign-up-mode:before {
-        bottom: 40%;
+        bottom: 35%;
         left: 50%;
     }
 }
 
 @media (max-width: 550px) {
+
+    .couponBox {
+        margin-top: 0px;
+        width: 100%;
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-end;
+    }
+    .couponBoxTwo {
+        width: 90%;
+        gap: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+    }
 
     .authBox {
         width: 100%;
@@ -3004,6 +3200,16 @@ button:focus {
 }
 
 @media (max-width: 460px) {
+
+    .priceFlexbox {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 0px;
+    }
+
     .footer-section {
         flex: 1;
         width: none;

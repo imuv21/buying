@@ -2,7 +2,7 @@ import React, { Fragment, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../slices/authSlice';
-import { showToast, subCategories } from '../assets/Schemas';
+import { showToast } from '../assets/Schemas';
 import { ExpandMore, Menu } from '@mui/icons-material';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
 import SearchIcon from '@mui/icons-material/Search';
@@ -67,10 +67,12 @@ const Header = () => {
           </div>
           <img className='logo' onClick={home} src={logo} alt="slasa" />
         </div>
+
         <div className='searchCont'>
           <input type="text" value={searchInput} placeholder='Search products...' onChange={(e) => setSearchInput(e.target.value)} onKeyDown={searchHandler} />
           <SearchIcon onClick={postSearch} />
         </div>
+
         <div className="nav-mobile">
           {!user && <Link to="/register" className="cartIcon"><h1 className='textBig'>Login / Signup</h1></Link>}
           {user && <Link to="/cart" className="cartIcon">
@@ -89,6 +91,11 @@ const Header = () => {
             </div>
           </div>
         </div>
+      </div>
+      <div className="catHeader">
+        <a className="text" id="whatsapp-link" target="_blank" aria-label="Chat with us on WhatsApp" href="https://wa.me/+919026075867?text=Hi, I’d like to customize some merch!">
+          Customize Your T-Shirt
+        </a>
       </div>
 
       {mobileMenuOpen && <div className="overlay visible" onClick={toggleMobileMenu}></div>}

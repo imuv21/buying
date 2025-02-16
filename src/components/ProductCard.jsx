@@ -51,12 +51,12 @@ const ProductCard = ({ id, title, originalPrice, salePrice, stocks, ratings, ima
                     ))}
                     &nbsp;&nbsp;<span className="textSmol">{ratings}</span>
                 </div>
-                <p className='text'>{title.length > 25 ? `${title.substring(0, 25)}...` : title}</p>
-                {isDiscount ? (<div className='flex' style={{ gap: '10px' }}>
+                <p className='text'>{title.length > 20 ? `${title.substring(0, 20)}...` : title}</p>
+                {isDiscount ? (<div className='priceFlexbox'>
                     <p className='product-discount' style={isDiscount ? { textDecoration: 'line-through' } : { textDecoration: 'none' }}>Rs. {Number(originalPrice).toFixed(2)}₹</p>
                     <p className='product-price'>Rs. {Number(salePrice).toFixed(2)}₹</p>
                 </div>) : (<p className='product-discount'>Rs. {Number(originalPrice).toFixed(2)}₹</p>)}
-                <button onClick={(event) => { event.stopPropagation(); onPopup(id, stocks); }} style={{ marginTop: '5px' }}>
+                <button onClick={(event) => { event.stopPropagation(); onPopup(id, stocks); }} style={{ marginTop: '5px' }} className='shopBtn'>
                     <AddShoppingCartIcon />Add to cart
                 </button>
             </div>

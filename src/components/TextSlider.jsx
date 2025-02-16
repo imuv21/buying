@@ -3,18 +3,17 @@ import React from 'react';
 const TextSlider = () => {
 
   const content = [
-    { text: "Gardening", className: "bold" },
-    { text: "Wood", className: "med" },
-    { text: "Acrylic", className: "lit" },
-    { text: "Neon", className: "bold" },
-    { text: "Toys", className: "med" },
-    { text: "Stationary", className: "lit" },
-    { text: "Customize", className: "bold" },
-    { text: "Artificial Plants", className: "med" },
-    { text: "Wood Easel Canvas", className: "lit" },
-    { text: "Festival Neon", className: "bold" },
-    { text: "Plants Accessories", className: "med" },
-    { text: "Wood Shelves", className: "lit" },
+    { text: "retro", className: "bold" },
+    { text: "nintendo", className: "med" },
+    { text: "deadpool", className: "lit" },
+    { text: "anti-hero", className: "bold" },
+    { text: "naruto", className: "med" },
+    { text: "shonen", className: "lit" },
+    { text: "breakingbad", className: "bold" },
+    { text: "walterwhite", className: "med" },
+    { text: "anime", className: "lit" },
+    { text: "marvel", className: "bold" },
+    { text: "starwars", className: "med" },
   ];
 
   return (
@@ -22,7 +21,7 @@ const TextSlider = () => {
       {[...Array(3)].map((_, i) => (
         <div key={i} className="marquee-slider">
           {content.map((item, index) => (
-            <p key={index} className={item.className} style={{fontFamily: 'var(--headingFamily)'}}>
+            <p key={index} className={item.className} style={{ fontFamily: 'var(--headingFamily)' }}>
               {item.text}
             </p>
           ))}
