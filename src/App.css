@@ -2225,7 +2225,7 @@ button:focus {
 }
 
 .subtotaldetail {
-    width: 150px;
+    width: 200px;
     gap: 10px;
     display: flex;
     flex-direction: column;
