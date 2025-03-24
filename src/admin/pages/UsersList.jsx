@@ -109,8 +109,9 @@ const UsersList = () => {
                                 <div className="email">{`${user.firstName} ${user.lastName}`}</div>
                                 <div className="email">{user.email}</div>
                                 <div className="seeBtns">
-                                    <button onClick={() => seeOrders(user._id)}>Orders</button>
-                                    <button onClick={() => seeReviews(user._id)}>Reviews</button>
+                                    {/* <button onClick={() => seeOrders(user._id)}>Orders</button>
+                                    <button onClick={() => seeReviews(user._id)}>Reviews</button> */}
+                                    <button>Block</button>
                                 </div>
                             </div>
                         )) : (<p className='text'>No users found!</p>)}
