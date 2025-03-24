@@ -132,6 +132,8 @@ const Home = () => {
                 </div>
                 <Grid heading={"Featured Products"} link={'/category'} onPopup={handleClickFooter} />
 
+                <h1 className='headingBig'>Shop By Category</h1>
+
                 <div className="categoryCont">
                     <Link to={'/category?query=T-Shirts'} className="catBox">
                         <img src={tshirt} alt="T-Shirts" />
