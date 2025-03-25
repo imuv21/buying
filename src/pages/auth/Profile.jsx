@@ -140,7 +140,6 @@ const Profile = () => {
                 showToast('error', `${response.message}`);
             }
         } catch (error) {
-            console.log(error);
             showToast('error', 'Something went wrong!');
         } finally {
             setIsSubmitted(false);

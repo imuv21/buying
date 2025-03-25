@@ -113,7 +113,6 @@ export const verifyPassword = createAsyncThunk(
     }
 );
 
-
 export const updateProfile = createAsyncThunk(
     'auth/updateProfile',
     async (userData, { rejectWithValue, getState }) => {
@@ -138,6 +137,7 @@ export const updateProfile = createAsyncThunk(
         }
     }
 );
+
 
 export const addAddress = createAsyncThunk(
     'auth/addAddress',
@@ -236,6 +236,7 @@ export const deleteAddress = createAsyncThunk(
         }
     }
 );
+
 
 export const getUserOrders = createAsyncThunk(
     'auth/getUserOrders',

@@ -49,7 +49,6 @@ const VerifyOTP = () => {
                     showToast('error', `${otpResponse.message}`);
                 }
             } catch (error) {
-                console.log(error);
                 showToast('error', 'Something went wrong!');
             }
         }
